@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CAPEDAC – Centro de Apoio à Pessoa com Deficiência Física do Acre</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
+<style>
+:root{--bg:#f6f7fb;--surface:#fff;--ink:#101a33;--muted:#4a5472;--navy:#173a8c;--red:#8f1616;--line:#c9d0e4;--on-navy:#fff;--ok:#0b6b3a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1326;--surface:#151d38;--ink:#eef1fb;--muted:#aab3d1;--navy:#7fa0ff;--red:#ff8a8a;--line:#2d3961;--on-navy:#0d1326;--ok:#5fd694}}
+:root[data-theme="dark"]{--bg:#0d1326;--surface:#151d38;--ink:#eef1fb;--muted:#aab3d1;--navy:#7fa0ff;--red:#ff8a8a;--line:#2d3961;--on-navy:#0d1326;--ok:#5fd694}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 "Atkinson Hyperlegible",system-ui,Arial,sans-serif}
+a,button,input,select{font:inherit}
+:focus-visible{outline:4px solid #f5a623;outline-offset:3px}
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--bg);padding:12px 16px}
+.skip:focus{left:8px;top:8px;z-index:9}
+header{background:var(--navy);color:var(--on-navy);padding:14px 20px}
+.bar{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.mark{width:52px;height:52px;border-radius:50%;background:var(--red);border:4px solid #fff;flex:none;display:grid;place-items:center}
+.mark svg{width:30px;height:30px}
+.bar strong{font-size:1.35rem;letter-spacing:.04em;display:block;line-height:1.1}
+.bar span{font-size:.85rem;opacity:.92;display:block;line-height:1.25}
+nav{max-width:760px;margin:0 auto;padding:12px 20px 0;display:flex;flex-wrap:wrap;gap:8px}
+nav a{flex:1 1 28%;text-align:center;padding:14px 8px;min-height:52px;border:2px solid var(--navy);border-radius:10px;color:var(--navy);text-decoration:none;font-weight:700;background:var(--surface)}
+nav a[aria-current="page"]{background:var(--navy);color:var(--on-navy)}
+main{max-width:760px;margin:0 auto;padding:20px 20px 48px}
+h1{font-size:1.9rem;line-height:1.2;margin:.4em 0 .3em}
+h2{font-size:1.3rem;margin:1.4em 0 .4em}
+p{max-width:62ch}
+.lead{color:var(--muted)}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
+.cta{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.btn{display:inline-flex;justify-content:center;align-items:center;min-height:56px;padding:12px 22px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:var(--on-navy);font-weight:700;text-decoration:none;cursor:pointer}
+.btn.alt{background:var(--surface);color:var(--navy)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+label{display:block;font-weight:700;margin:16px 0 6px}
+.hint{font-weight:400;color:var(--muted);font-size:.92rem}
+input,select{width:100%;min-height:52px;padding:10px 14px;border:2px solid var(--muted);border-radius:10px;background:var(--surface);color:var(--ink)}
+.check{display:flex;gap:12px;align-items:flex-start;font-weight:400;margin-top:20px}
+.check input{width:28px;min-height:28px;height:28px;flex:none;margin-top:3px}
+.err{color:var(--red);font-weight:700;margin:6px 0 0;min-height:1.2em}
+.ok{color:var(--ok);font-weight:700}
+.price{font-size:2.6rem;font-weight:700;line-height:1;color:var(--navy)}
+#qr{display:grid;place-items:center;background:#fff;padding:16px;border-radius:12px;width:max-content;max-width:100%;margin:12px auto}
+.code{word-break:break-all;font-size:.85rem;background:var(--bg);border:2px dashed var(--line);border-radius:10px;padding:12px;margin:12px 0}
+textarea{width:100%;padding:10px 14px;border:2px solid var(--muted);border-radius:10px;background:var(--surface);color:var(--ink)}
+.ev{border-left:8px solid var(--red)}.ev h3{margin:0 0 4px;font-size:1.25rem}.when{font-weight:700;color:var(--navy);margin-bottom:6px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}.row .btn{min-height:48px}
+.small{font-size:.92rem;color:var(--muted)}
+footer{max-width:760px;margin:0 auto;padding:0 20px 32px}footer a{color:var(--muted)}
+.view{display:none}.view.on{display:block}
+details{margin-top:28px;color:var(--muted)}
+summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
+@media (min-width:600px){.cta{flex-direction:row}.cta .btn{flex:1}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+<header>
+  <div class="bar">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff"><circle cx="15" cy="4" r="2.4"/><path d="M9 7l5 1.2 1.6 5H19v2.4h-4.6l-1.5-4.4-2.7 3.3A5 5 0 1 0 15 19.6l-1.6-2.2A2.6 2.6 0 1 1 11 13l3-3.6-3-.8-2.3 2.6-1.7-1.5z"/></svg></div>
+    <div><strong>CAPEDAC</strong><span>Centro de Apoio à Pessoa com Deficiência Física do Acre</span></div>
+  </div>
+</header>
+<nav aria-label="Principal">
+  <a href="#inicio" data-v="inicio">Início</a>
+  <a href="#eventos" data-v="eventos">Eventos</a>
+  <a href="#cadastro" data-v="cadastro">Cadastro</a>
+  <a href="#socio" data-v="socio">Seja sócio</a>
+  <a href="#beneficios" data-v="beneficios">Área do sócio</a>
+</nav>
+<main id="conteudo">
+
+<section class="view" id="v-inicio" aria-labelledby="t-inicio">
+  <h1 id="t-inicio">Juntos por mais direitos e autonomia</h1>
+  <p class="lead">Faça seu cadastro na associação ou torne-se membro sócio e ajude a manter o trabalho da CAPEDAC.</p>
+  <div class="cta">
+    <a class="btn" href="#cadastro">Fazer meu cadastro</a>
+    <a class="btn alt" href="#socio">Quero ser sócio</a>
+  </div>
+</section>
+
+<section class="view" id="v-cadastro" aria-labelledby="t-cad">
+  <h1 id="t-cad">Cadastro de associado</h1>
+  <p class="lead">Campos com * são obrigatórios.</p>
+  <form id="f-cad" class="card" novalidate>
+    <label for="nome">Nome completo *</label>
+    <input id="nome" autocomplete="name" required>
+    <p class="err" id="e-nome" role="alert"></p>
+
+    <label for="cpf">CPF *</label>
+    <input id="cpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00" required>
+    <p class="err" id="e-cpf" role="alert"></p>
+
+    <label for="nasc">Data de nascimento *</label>
+    <input id="nasc" type="date" autocomplete="bday" required>
+    <p class="err" id="e-nasc" role="alert"></p>
+
+    <label for="tel">Telefone com WhatsApp *</label>
+    <input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(68) 90000-0000" required>
+    <p class="err" id="e-tel" role="alert"></p>
+
+    <label for="cidade">Cidade *</label>
+    <input id="cidade" autocomplete="address-level2" value="Rio Branco" required>
+    <p class="err" id="e-cidade" role="alert"></p>
+
+    <label for="tipo">Tipo de deficiência <span class="hint">(opcional)</span></label>
+    <select id="tipo">
+      <option value="">Prefiro não informar agora</option>
+      <option>Paraplegia</option><option>Tetraplegia</option><option>Amputação</option>
+      <option>Mobilidade reduzida</option><option>Outra deficiência física</option>
+    </select>
+
+    <label class="check" for="lgpd">
+      <input type="checkbox" id="lgpd">
+      <span>Autorizo a CAPEDAC a guardar meus dados para gerenciar meu cadastro de associado.</span>
+    </label>
+    <p class="err" id="e-lgpd" role="alert"></p>
+
+    <div class="cta"><button class="btn" type="submit">Salvar cadastro</button></div>
+    <p id="ok-cad" class="ok" role="status"></p>
+  </form>
+</section>
+
+<section class="view" id="v-socio" aria-labelledby="t-soc">
+  <h1 id="t-soc">Seja membro sócio</h1>
+  <div class="card">
+    <div class="price">R$ 25,00</div>
+    <p class="lead">Contribuição para a CAPEDAC. Pagamento por Pix.</p>
+  </div>
+  <form id="f-soc" class="card" novalidate>
+    <label for="s-nome">Seu nome completo *</label>
+    <input id="s-nome" autocomplete="name" required>
+    <p class="err" id="e-snome" role="alert"></p>
+    <label for="s-tel">Telefone com WhatsApp *</label>
+    <input id="s-tel" type="tel" inputmode="tel" autocomplete="tel" required>
+    <p class="err" id="e-stel" role="alert"></p>
+    <div class="cta"><button class="btn red" type="submit">Gerar QR code do Pix</button></div>
+    <p class="err" id="e-pix" role="alert"></p>
+  </form>
+
+  <div id="pix" class="card" hidden aria-live="polite">
+    <h2 style="margin-top:0">Pague R$ 25,00 pelo Pix</h2>
+    <p>Abra o app do seu banco, escolha <b>Pix</b> e leia o QR code.</p>
+    <div id="qr" aria-label="QR code do Pix"></div>
+    <p>Ou use o Pix copia e cola:</p>
+    <div class="code" id="copia"></div>
+    <div class="cta">
+      <button class="btn alt" id="b-copiar" type="button">Copiar código Pix</button>
+      <button class="btn" id="b-pago" type="button">Já paguei</button>
+    </div>
+    <p id="ok-soc" class="ok" role="status"></p>
+  </div>
+
+  </section>
+
+<section class="view" id="v-eventos" aria-labelledby="t-ev">
+  <h1 id="t-ev">Eventos e festas</h1>
+  <div id="lista-ev"></div>
+</section>
+
+<section class="view" id="v-beneficios" aria-labelledby="t-ben">
+  <h1 id="t-ben">Área do sócio</h1>
+  <p class="lead">Informe o telefone usado no pagamento para ver seus benefícios.</p>
+  <form id="f-ben" class="card" novalidate>
+    <label for="b-tel">Telefone *</label>
+    <input id="b-tel" type="tel" inputmode="tel" autocomplete="tel">
+    <p class="err" id="e-ben" role="alert"></p>
+    <div class="cta"><button class="btn" type="submit">Ver meus benefícios</button></div>
+  </form>
+  <div id="ben-box" class="card" hidden></div>
+</section>
+
+<section class="view" id="v-admin" aria-labelledby="t-adm">
+  <h1 id="t-adm">Painel da diretoria</h1>
+  <div id="a-login" class="card">
+    <label for="a-email">E-mail</label>
+    <input id="a-email" type="email" autocomplete="username">
+    <label for="a-senha">Senha</label>
+    <input id="a-senha" type="password" autocomplete="current-password">
+    <p class="err" id="e-adm" role="alert"></p>
+    <div class="cta"><button class="btn" id="a-entrar" type="button">Entrar</button></div>
+  </div>
+  <div id="a-painel" hidden>
+    <form id="f-ev" class="card" novalidate>
+      <h2 style="margin-top:0">Publicar evento</h2>
+      <label for="ev-titulo">Título *</label>
+      <input id="ev-titulo" placeholder="Ex.: Festa de fim de ano">
+      <label for="ev-data">Data *</label>
+      <input id="ev-data" type="date">
+      <label for="ev-hora">Horário</label>
+      <input id="ev-hora" type="time">
+      <label for="ev-local">Local</label>
+      <input id="ev-local">
+      <label for="ev-desc">Descrição</label>
+      <textarea id="ev-desc" rows="3"></textarea>
+      <p class="err" id="e-ev" role="alert"></p>
+      <div class="cta"><button class="btn" type="submit">Publicar evento</button></div>
+      <p class="ok" id="ok-ev" role="status"></p>
+    </form>
+    <h2>Eventos publicados</h2><div id="a-evs"></div>
+    <h2>Pagamentos de sócios</h2><div id="a-socios"></div>
+    <h2>Benefícios dos sócios</h2>
+    <div class="card">
+      <label for="a-ben" style="margin-top:0">Um benefício por linha</label>
+      <textarea id="a-ben" rows="6"></textarea>
+      <div class="cta"><button class="btn" id="a-salvar-ben" type="button">Salvar benefícios</button></div>
+      <p class="ok" id="ok-ben" role="status"></p>
+    </div>
+    <h2>Cadastros recebidos</h2><div id="a-cads"></div>
+    <div class="cta"><button class="btn alt" id="a-sair" type="button">Sair do painel</button></div>
+  </div>
+</section>
+
+</main>
+<footer><a href="#admin">Acesso da diretoria</a></footer>
+<script>
+(function(){
+  /* CONFIGURAÇÃO: troque os 3 valores abaixo antes de publicar */
+  var SUPABASE_URL="COLE_AQUI_A_PROJECT_URL";
+  var SUPABASE_KEY="COLE_AQUI_A_CHAVE_ANON_PUBLIC";
+  var PIX_KEY="COLE_AQUI_A_CHAVE_PIX";
+  var NOME_RECEBEDOR="CAPEDAC", CIDADE="RIO BRANCO", VALOR="25.00";
+
+  var $=function(id){return document.getElementById(id)};
+  var db=null;
+  try{if(SUPABASE_URL.indexOf("http")===0)db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){}
+  var OFF="O site ainda não está conectado ao banco de dados.";
+  var FALHA="Não foi possível concluir. Verifique a internet e tente de novo.";
+  function erro(id,msg){$(id).textContent=msg||"";return !msg}
+  function h(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+  function dig(s){return String(s||"").replace(/\D/g,"")}
+  function dBR(d){var p=(d||"").split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:""}
+  function btn(t,fn,c){var b=h("button","btn "+(c||"alt"),t);b.type="button";b.addEventListener("click",fn);return b}
+
+  /* navegação */
+  function route(){
+    var v=(location.hash||"#inicio").slice(1);
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,beneficios:1,admin:1}[v])v="inicio";
+    document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
+    document.querySelectorAll("nav a").forEach(function(a){
+      if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
+    });
+    window.scrollTo(0,0);
+    if(v==="eventos")renderEventos();
+    if(v==="admin")renderAdmin();
+  }
+  window.addEventListener("hashchange",route);
+
+  /* validação */
+  function cpfOk(c){
+    c=c.replace(/\D/g,"");
+    if(c.length!==11||/^(\d)\1+$/.test(c))return false;
+    for(var t=9;t<11;t++){var s=0;for(var i=0;i<t;i++)s+=c[i]*(t+1-i);if(((s*10)%11)%10!=c[t])return false}
+    return true;
+  }
+  $("cpf").addEventListener("input",function(e){
+    var v=e.target.value.replace(/\D/g,"").slice(0,11);
+    v=v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+    e.target.value=v;
+  });
+
+  /* cadastro */
+  $("f-cad").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var ok=true;
+    ok=erro("e-nome",$("nome").value.trim().split(/\s+/).length<2?"Digite nome e sobrenome.":"")&&ok;
+    ok=erro("e-cpf",cpfOk($("cpf").value)?"":"CPF inválido. Confira os números.")&&ok;
+    ok=erro("e-nasc",$("nasc").value?"":"Informe a data de nascimento.")&&ok;
+    ok=erro("e-tel",dig($("tel").value).length<10?"Digite o telefone com DDD.":"")&&ok;
+    ok=erro("e-cidade",$("cidade").value.trim()?"":"Informe a cidade.")&&ok;
+    ok=erro("e-lgpd",$("lgpd").checked?"":"Marque a autorização para salvar o cadastro.")&&ok;
+    if(!ok)return;
+    if(!db){erro("e-lgpd",OFF);return}
+    var r=await db.from("membros").insert({nome:$("nome").value.trim(),cpf:dig($("cpf").value),nascimento:$("nasc").value,telefone:dig($("tel").value),cidade:$("cidade").value.trim(),tipo_deficiencia:$("tipo").value||null,consentimento:true});
+    if(r.error){erro("e-lgpd",FALHA);console.error(r.error);return}
+    $("ok-cad").textContent="Cadastro enviado para a CAPEDAC. Obrigado!";
+    $("f-cad").reset();$("cidade").value="Rio Branco";
+  });
+
+  /* Pix copia e cola (BR Code estático) */
+  function tlv(id,v){return id+("0"+v.length).slice(-2)+v}
+  function crc16(s){
+    var c=0xFFFF;
+    for(var i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(var j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}
+    return ("000"+c.toString(16).toUpperCase()).slice(-4);
+  }
+  function brcode(chave){
+    var conta=tlv("00","br.gov.bcb.pix")+tlv("01",chave);
+    var p=tlv("00","01")+tlv("01","11")+tlv("26",conta)+tlv("52","0000")+tlv("53","986")+tlv("54",VALOR)+tlv("58","BR")+tlv("59",NOME_RECEBEDOR)+tlv("60",CIDADE)+tlv("62",tlv("05","***"))+"6304";
+    return p+crc16(p);
+  }
+  var atual=null;
+  $("f-soc").addEventListener("submit",function(e){
+    e.preventDefault();
+    var ok=true;
+    ok=erro("e-snome",$("s-nome").value.trim().split(/\s+/).length<2?"Digite nome e sobrenome.":"")&&ok;
+    ok=erro("e-stel",dig($("s-tel").value).length<10?"Digite o telefone com DDD.":"")&&ok;
+    if(PIX_KEY.indexOf("COLE_AQUI")===0){erro("e-pix","A chave Pix da associação ainda não foi configurada no site.");ok=false}
+    else erro("e-pix","");
+    if(!ok)return;
+    var code=brcode(PIX_KEY);
+    atual={nome:$("s-nome").value.trim(),telefone:dig($("s-tel").value)};
+    $("qr").innerHTML="";
+    if(window.QRCode){new QRCode($("qr"),{text:code,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})}
+    else{$("qr").textContent="Não foi possível gerar o QR code. Use o código copia e cola."}
+    $("copia").textContent=code;
+    $("pix").hidden=false;$("ok-soc").textContent="";
+    $("pix").scrollIntoView({behavior:"smooth"});
+  });
+  $("b-copiar").addEventListener("click",function(){
+    var t=$("copia").textContent;
+    function fim(m){$("ok-soc").textContent=m}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){fim("Código copiado. Cole no app do seu banco.")},function(){fim("Não foi possível copiar. Segure o texto para copiar.")})}
+    else{fim("Segure o texto do código para copiar.")}
+  });
+  $("b-pago").addEventListener("click",async function(){
+    if(!atual)return;
+    if(!db){$("ok-soc").textContent=OFF;return}
+    var r=await db.from("socios").insert(atual);
+    $("ok-soc").textContent=r.error?FALHA:"Recebemos seu aviso. A CAPEDAC vai confirmar o pagamento e entrar em contato.";
+  });
+
+  /* eventos */
+  async function renderEventos(){
+    var box=$("lista-ev");box.textContent="";
+    if(!db){box.appendChild(h("p","lead",OFF));return}
+    var r=await db.from("eventos").select("*").order("data");
+    var ev=r.data||[];
+    if(r.error){box.appendChild(h("p","lead",FALHA));return}
+    if(!ev.length){box.appendChild(h("p","lead","Nenhum evento publicado ainda. Volte em breve."));return}
+    ev.forEach(function(e){
+      var c=h("article","card ev");
+      c.appendChild(h("h3",0,e.titulo));
+      c.appendChild(h("div","when",dBR(e.data)+(e.hora?" às "+e.hora:"")+(e.local?" – "+e.local:"")));
+      if(e.descricao)c.appendChild(h("p",0,e.descricao));
+      box.appendChild(c);
+    });
+  }
+
+  /* área do sócio */
+  $("f-ben").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var t=dig($("b-tel").value),box=$("ben-box");
+    if(t.length<10){box.hidden=true;erro("e-ben","Digite o telefone com DDD.");return}
+    if(!db){erro("e-ben",OFF);return}
+    var r=await db.rpc("ver_beneficios",{tel:t});
+    if(r.error){box.hidden=true;erro("e-ben",FALHA);return}
+    var rows=r.data||[];
+    if(!rows.length){box.hidden=true;erro("e-ben","Não encontramos pagamento confirmado para este telefone. Se você já pagou, aguarde a confirmação da CAPEDAC.");return}
+    erro("e-ben","");box.textContent="";box.hidden=false;
+    box.appendChild(h("h2",0,"Olá, "+rows[0].nome.split(" ")[0]+"! Seus benefícios:"));
+    var b=rows.filter(function(x){return x.texto});
+    if(!b.length)box.appendChild(h("p","lead","A diretoria ainda vai publicar os benefícios."));
+    else{var ul=h("ul");b.forEach(function(x){ul.appendChild(h("li",0,x.texto))});box.appendChild(ul)}
+  });
+
+  /* painel da diretoria */
+  async function checaAdmin(){
+    if(!db)return false;
+    var s=await db.auth.getSession();
+    if(!s.data.session)return false;
+    var r=await db.rpc("is_admin");
+    return r.data===true;
+  }
+  async function renderAdmin(){
+    var on=await checaAdmin();
+    $("a-login").hidden=on;$("a-painel").hidden=!on;
+    if(!on)return;
+    var r=await db.from("eventos").select("*").order("data"),bx=$("a-evs");bx.textContent="";
+    if(!(r.data||[]).length)bx.appendChild(h("p","small","Nenhum evento publicado."));
+    (r.data||[]).forEach(function(e){
+      var c=h("div","card row");
+      c.appendChild(h("span",0,dBR(e.data)+" – "+e.titulo));
+      c.appendChild(btn("Remover",async function(){await db.from("eventos").delete().eq("id",e.id);renderAdmin()}));
+      bx.appendChild(c);
+    });
+    r=await db.from("socios").select("*").order("criado_em",{ascending:false});
+    var sx=$("a-socios");sx.textContent="";
+    if(!(r.data||[]).length)sx.appendChild(h("p","small","Nenhum aviso de pagamento."));
+    (r.data||[]).forEach(function(s){
+      var c=h("div","card row");
+      c.appendChild(h("span",0,s.nome+" ("+s.telefone+") – "+s.status));
+      if(s.status!=="confirmado")c.appendChild(btn("Confirmar pagamento",async function(){await db.from("socios").update({status:"confirmado"}).eq("id",s.id);renderAdmin()},"red"));
+      sx.appendChild(c);
+    });
+    r=await db.from("membros").select("nome,cidade,telefone").order("criado_em",{ascending:false});
+    var cx=$("a-cads");cx.textContent="";
+    if(!(r.data||[]).length)cx.appendChild(h("p","small","Nenhum cadastro recebido."));
+    (r.data||[]).forEach(function(p){cx.appendChild(h("div","card",p.nome+" – "+p.cidade+" – "+p.telefone))});
+    r=await db.from("beneficios").select("texto").order("ordem");
+    $("a-ben").value=(r.data||[]).map(function(x){return x.texto}).join("\n");
+  }
+  $("a-entrar").addEventListener("click",async function(){
+    if(!db){erro("e-adm",OFF);return}
+    var r=await db.auth.signInWithPassword({email:$("a-email").value.trim(),password:$("a-senha").value});
+    if(r.error){erro("e-adm","E-mail ou senha incorretos.");return}
+    if(!(await checaAdmin())){await db.auth.signOut();erro("e-adm","Esta conta não tem permissão de administrador.");return}
+    erro("e-adm","");$("a-senha").value="";renderAdmin();
+  });
+  $("a-sair").addEventListener("click",async function(){await db.auth.signOut();renderAdmin()});
+  $("f-ev").addEventListener("submit",async function(e){
+    e.preventDefault();
+    if(!$("ev-titulo").value.trim()||!$("ev-data").value){erro("e-ev","Preencha o título e a data.");return}
+    var r=await db.from("eventos").insert({titulo:$("ev-titulo").value.trim(),data:$("ev-data").value,hora:$("ev-hora").value||null,local:$("ev-local").value.trim()||null,descricao:$("ev-desc").value.trim()||null});
+    if(r.error){erro("e-ev",FALHA);return}
+    erro("e-ev","");$("f-ev").reset();$("ok-ev").textContent="Evento publicado.";renderAdmin();
+  });
+  $("a-salvar-ben").addEventListener("click",async function(){
+    var linhas=$("a-ben").value.split("\n").map(function(x){return x.trim()}).filter(Boolean);
+    var d=await db.from("beneficios").delete().not("id","is",null);
+    if(d.error){$("ok-ben").textContent=FALHA;return}
+    if(linhas.length){var i=await db.from("beneficios").insert(linhas.map(function(t,n){return {texto:t,ordem:n}}));if(i.error){$("ok-ben").textContent=FALHA;return}}
+    $("ok-ben").textContent="Benefícios salvos.";
+  });
+
+  route();
+})();
+</script>
+</body>
+</html>
