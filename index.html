@@ -73,7 +73,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <a href="#eventos" data-v="eventos">Eventos</a>
   <a href="#cadastro" data-v="cadastro">Cadastro</a>
   <a href="#socio" data-v="socio">Seja sócio</a>
-  <a href="#beneficios" data-v="beneficios">Área do sócio</a>
+  <a href="#minha-area" data-v="minha-area" id="n-minha" hidden>Minha área</a>
   <a href="#entrar" data-v="entrar" id="n-entrar">Entrar</a>
 </nav>
 <main id="conteudo">
@@ -185,10 +185,14 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <div id="lista-ev"></div>
 </section>
 
-<section class="view" id="v-beneficios" aria-labelledby="t-ben">
-  <h1 id="t-ben">Área do sócio</h1>
-  <p class="lead" id="ben-msg"></p>
-  <div id="ben-box" class="card" hidden></div>
+<section class="view" id="v-minha-area" aria-labelledby="t-min">
+  <h1 id="t-min">Minha área</h1>
+  <p class="lead" id="min-msg"></p>
+  <div id="min-box" hidden>
+    <div class="card" id="c-cad"></div>
+    <div class="card" id="c-socio"></div>
+    <div class="card" id="c-ben"></div>
+  </div>
 </section>
 
 <section class="view" id="v-admin" aria-labelledby="t-adm">
@@ -256,7 +260,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,beneficios:1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
     document.querySelectorAll("nav a").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
@@ -264,7 +268,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     window.scrollTo(0,0);
     if(v==="eventos")renderEventos();
     if(v==="admin")renderAdmin();
-    if(v==="beneficios")renderBeneficios();
+    if(v==="minha-area")renderMinhaArea();
     if(v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
   window.addEventListener("hashchange",route);
@@ -298,6 +302,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     var r=await db.from("membros").upsert({user_id:u.id,nome:$("nome").value.trim(),cpf:dig($("cpf").value),nascimento:$("nasc").value,telefone:dig($("tel").value),cidade:$("cidade").value.trim(),tipo_deficiencia:$("tipo").value||null,consentimento:true},{onConflict:"user_id"});
     if(r.error){erro("e-lgpd",FALHA);console.error(r.error);return}
     $("ok-cad").textContent="Cadastro enviado para a CAPEDAC. Obrigado!";
+    setTimeout(function(){location.hash="#minha-area"},1500);
     $("f-cad").reset();$("cidade").value="Rio Branco";
   });
 
@@ -342,7 +347,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(!db){$("ok-soc").textContent=OFF;return}
     var u=await usuario();if(!u){$("ok-soc").textContent="Entre na sua conta primeiro.";return}
     var r=await db.from("socios").insert({user_id:u.id,nome:atual.nome,telefone:atual.telefone});
-    if(!r.error)$("b-pago").disabled=true;
+    if(!r.error){$("b-pago").disabled=true;setTimeout(function(){location.hash="#minha-area"},2500)}
     $("ok-soc").textContent=r.error?FALHA:"Recebemos seu aviso. A CAPEDAC vai confirmar o pagamento e entrar em contato.";
   });
 
@@ -371,7 +376,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   }
   async function atualizaConta(){
     var u=await usuario();
-    $("n-entrar").hidden=!!u;
+    $("n-entrar").hidden=!!u;$("n-minha").hidden=!u;
     $("f-cad").hidden=!u;$("gate-cad").hidden=!!u;
     $("f-soc").hidden=!u;$("gate-soc").hidden=!!u;
     var c=$("conta");c.textContent="";
@@ -402,23 +407,34 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(modo==="criar"&&!r.data.session){erro("e-ent","Conta criada. Confirme seu e-mail para entrar.");return}
     erro("e-ent","");$("l-senha").value="";
     await atualizaConta();
-    location.hash=modo==="criar"?"#cadastro":"#inicio";
+    location.hash=modo==="criar"?"#cadastro":"#minha-area";
   });
 
-  /* área do sócio (precisa estar logado) */
-  async function renderBeneficios(){
-    var box=$("ben-box"),msg=$("ben-msg");box.hidden=true;box.textContent="";msg.textContent="";
+  /* minha área (precisa estar logado) */
+  function titulo(t){var e=h("h2",0,t);e.style.marginTop="0";return e}
+  function link(t,href,c){var e=h("a","btn "+(c||""),t);e.href=href;return e}
+  async function renderMinhaArea(){
+    var box=$("min-box"),msg=$("min-msg");box.hidden=true;msg.textContent="";
     var u=await usuario();
-    if(!u){msg.textContent="Entre na sua conta para ver seus benefícios.";return}
-    var r=await db.rpc("ver_beneficios");
+    if(!u){msg.textContent="Entre na sua conta para ver sua área.";return}
+    var r=await db.rpc("meu_painel");
     if(r.error){msg.textContent=FALHA;return}
-    var rows=r.data||[];
-    if(!rows.length){msg.textContent="Você ainda não é sócio confirmado. Se já pagou, aguarde a confirmação da CAPEDAC.";return}
+    var d=r.data||{},cad=$("c-cad"),so=$("c-socio"),be=$("c-ben");
+    cad.textContent="";so.textContent="";be.textContent="";
+    msg.textContent=d.nome?"Olá, "+d.nome.split(" ")[0]+"!":"Bem-vindo(a)! Falta completar seu cadastro.";
+    cad.appendChild(titulo("Meu cadastro"));
+    if(d.tem_cadastro)cad.appendChild(h("p","ok","Cadastro completo."));
+    else{cad.appendChild(h("p",0,"Você ainda não preencheu seus dados."));cad.appendChild(link("Completar meu cadastro","#cadastro"))}
+    so.appendChild(titulo("Sócio da CAPEDAC"));
+    if(d.socio==="confirmado")so.appendChild(h("p","ok","Você é sócio. Obrigado por apoiar a CAPEDAC!"));
+    else if(d.socio==="aguardando")so.appendChild(h("p",0,"Recebemos o aviso do seu pagamento. Aguarde a confirmação da CAPEDAC."));
+    else{so.appendChild(h("p",0,"Contribua com R$ 25,00 por Pix e tenha acesso aos benefícios abaixo."));so.appendChild(link("Quero ser sócio","#socio","red"))}
+    be.appendChild(titulo(d.socio==="confirmado"?"Seus benefícios":"Benefícios para sócios"));
+    var b=d.beneficios||[];
+    if(!b.length)be.appendChild(h("p","lead","A diretoria ainda vai publicar os benefícios."));
+    else{var ul=h("ul");b.forEach(function(x){ul.appendChild(h("li",0,x))});be.appendChild(ul)}
+    if(d.socio!=="confirmado"&&b.length)be.appendChild(h("p","small","Os benefícios valem para sócios com pagamento confirmado."));
     box.hidden=false;
-    box.appendChild(h("h2",0,"Olá, "+rows[0].nome.split(" ")[0]+"! Seus benefícios:"));
-    var b=rows.filter(function(x){return x.texto});
-    if(!b.length)box.appendChild(h("p","lead","A diretoria ainda vai publicar os benefícios."));
-    else{var ul=h("ul");b.forEach(function(x){ul.appendChild(h("li",0,x.texto))});box.appendChild(ul)}
   }
 
   /* painel da diretoria */
