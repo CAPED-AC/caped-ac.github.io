@@ -89,7 +89,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 <nav aria-label="Principal">
   <a href="#inicio" data-v="inicio">Início</a>
   <a href="#eventos" data-v="eventos">Eventos</a>
-  <a href="#historias" data-v="historias" id="n-hist" hidden>Histórias</a>
+  <a href="#historias" data-v="historias" id="n-hist" hidden>Entrevista CAPEDAC</a>
   <a href="#parceiros" data-v="parceiros">Parceiros</a>
   <a href="#doar" data-v="doar">Doar</a>
   <a href="#sobre" data-v="sobre">Sobre</a>
@@ -102,15 +102,13 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <img data-logo class="hero-logo" alt="Logo da CAPEDAC" width="200" height="200">
   <h1 id="t-inicio">Juntos por mais direitos e autonomia</h1>
   <p class="lead">Faça seu cadastro na associação ou torne-se membro sócio e ajude a manter o trabalho da CAPEDAC.</p>
-  <div class="cta">
-    <a class="btn" href="#cadastro">Fazer meu cadastro</a>
-    <a class="btn alt" href="#socio">Quero ser sócio</a>
-  </div>
+  <div class="cta" id="cta-inicio"></div>
 </section>
 
 <section class="view" id="v-cadastro" aria-labelledby="t-cad">
   <h1 id="t-cad">Cadastro de associado</h1>
   <p class="lead">Campos com * são obrigatórios.</p>
+  <p class="ok" id="cad-nota" hidden>Seu cadastro já está completo. Se preencher de novo, seus dados serão atualizados.</p>
   <div id="gate-cad" class="card" hidden><p>Para fazer seu cadastro, primeiro entre ou crie sua conta.</p><div class="cta"><a class="btn" href="#entrar">Entrar ou criar conta</a></div></div>
   <form id="f-cad" class="card" novalidate>
     <label for="nome">Nome completo *</label>
@@ -158,6 +156,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <p class="lead">Mensalidade de sócio. Pagamento por Pix, todo mês.</p>
   </div>
   <div id="gate-soc" class="card" hidden><p>Para ser sócio, primeiro entre ou crie sua conta.</p><div class="cta"><a class="btn" href="#entrar">Entrar ou criar conta</a></div></div>
+  <div id="gate-soc2" class="card" hidden><p>Para ser sócio, complete primeiro o seu cadastro.</p><div class="cta"><a class="btn" href="#cadastro">Completar meu cadastro</a></div></div>
   <form id="f-soc" class="card" novalidate>
     <label for="s-nome">Seu nome completo *</label>
     <input id="s-nome" autocomplete="name" required>
@@ -259,11 +258,12 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 <section class="view" id="v-sobre" aria-labelledby="t-sobre">
   <h1 id="t-sobre">Sobre a CAPEDAC</h1>
   <div id="sobre-box" class="sobre"></div>
+  <div id="redes-sobre"></div>
 </section>
 
 <section class="view" id="v-historias" aria-labelledby="t-hist">
-  <h1 id="t-hist">Histórias</h1>
-  <p class="lead">Entrevistas e histórias de pessoas com deficiência, contadas para a comunidade da CAPEDAC.</p>
+  <h1 id="t-hist">Entrevista CAPEDAC</h1>
+  <p class="lead">Conversas com pessoas com deficiência, contadas para a comunidade da CAPEDAC.</p>
   <p class="lead" id="hist-msg"></p>
   <div id="lista-hist"></div>
 </section>
@@ -320,20 +320,32 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
       <div class="cta"><button class="btn" id="a-salvar-ben" type="button">Salvar benefícios</button></div>
       <p class="ok" id="ok-ben" role="status"></p>
     </div>
-    <h2>Histórias (feed)</h2>
+    <h2>Entrevista CAPEDAC (feed)</h2>
     <form id="f-hist" class="card" novalidate>
       <label for="h-titulo" style="margin-top:0">Título *</label>
       <input id="h-titulo" maxlength="150">
       <label for="h-texto">Texto *</label>
       <textarea id="h-texto" rows="10"></textarea>
-      <label for="h-link">Link de vídeo ou publicação <span class="hint">(opcional; vídeo do YouTube aparece direto no feed)</span></label>
+      <label for="h-video">Vídeo <span class="hint">(arquivo do celular, MP4, até 50 MB)</span></label>
+      <input id="h-video" type="file" accept="video/mp4,video/quicktime,video/webm">
+      <label for="h-link">Link (opcional) <span class="hint">(YouTube aparece como vídeo; outros viram o botão "Ver mais")</span></label>
       <input id="h-link" inputmode="url" placeholder="https://...">
-      <label class="check" for="h-ok"><input type="checkbox" id="h-ok"><span>Tenho autorização por escrito da pessoa entrevistada para publicar esta história.</span></label>
+      <label class="check" for="h-ok"><input type="checkbox" id="h-ok"><span>Tenho autorização por escrito da pessoa entrevistada para publicar esta entrevista.</span></label>
       <p class="err" id="e-hist" role="alert"></p>
-      <div class="cta"><button class="btn" id="h-salvar" type="submit">Publicar história</button><button class="btn alt" id="h-cancelar" type="button" hidden>Cancelar edição</button></div>
+      <div class="cta"><button class="btn" id="h-salvar" type="submit">Publicar entrevista</button><button class="btn alt" id="h-cancelar" type="button" hidden>Cancelar edição</button></div>
       <p class="ok" id="ok-hist" role="status"></p>
     </form>
     <div id="a-hists"></div>
+    <h2>Redes sociais da CAPEDAC</h2>
+    <div class="card">
+      <p class="small">Cole o link completo (começando com https://). No WhatsApp, só o número com DDD. Deixe em branco o que a CAPEDAC não tem.</p>
+      <label for="r-instagram">Instagram</label><input id="r-instagram" inputmode="url" placeholder="https://instagram.com/...">
+      <label for="r-facebook">Facebook</label><input id="r-facebook" inputmode="url" placeholder="https://facebook.com/...">
+      <label for="r-youtube">YouTube</label><input id="r-youtube" inputmode="url" placeholder="https://youtube.com/...">
+      <label for="r-whatsapp">WhatsApp</label><input id="r-whatsapp" inputmode="tel" placeholder="68 90000-0000">
+      <div class="cta"><button class="btn" id="r-salvar" type="button">Salvar redes</button></div>
+      <p class="ok" id="ok-redes" role="status"></p>
+    </div>
     <h2>Página Sobre</h2>
     <div class="card">
       <label for="a-sobre" style="margin-top:0">Texto da página (deixe uma linha em branco entre parágrafos)</label>
@@ -354,7 +366,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 </section>
 
 </main>
-<footer><p id="conta" class="small"></p><a href="#admin">Acesso da diretoria</a></footer>
+<footer><div id="redes-rodape"></div><p id="conta" class="small"></p><a href="#admin">Acesso da diretoria</a></footer>
 <script>
 (function(){
   /* CONFIGURAÇÃO: troque os 3 valores abaixo antes de publicar */
@@ -392,7 +404,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(v==="parceiros"){renderParceiros();atualizaConta()}
     if(v==="sobre")renderSobre();
     if(v==="historias")renderHistorias();
-    if(v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
+    if(v==="inicio"||v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
   window.addEventListener("hashchange",route);
 
@@ -518,16 +530,28 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     var s=await db.auth.getSession();
     return s.data.session?s.data.session.user:null;
   }
+  var estado=null;
   async function atualizaConta(){
     var u=await usuario();
+    var cad=false;estado=null;
+    if(u){var pp=await db.rpc("meu_painel");if(pp.data){estado=pp.data;cad=!!pp.data.tem_cadastro}}
     $("n-entrar").hidden=!!u;$("n-minha").hidden=!u;$("n-hist").hidden=!u;
-    $("f-cad").hidden=!u;$("gate-cad").hidden=!!u;
-    $("f-soc").hidden=!u;$("gate-soc").hidden=!!u;$("f-par").hidden=!u;$("gate-par").hidden=!!u;
+    $("f-cad").hidden=!u;$("gate-cad").hidden=!!u;$("cad-nota").hidden=!cad;
+    $("f-soc").hidden=!u||!cad;$("gate-soc").hidden=!!u;$("gate-soc2").hidden=!(u&&!cad);$("f-par").hidden=!u;$("gate-par").hidden=!!u;
     var c=$("conta");c.textContent="";
     if(u){
       c.appendChild(document.createTextNode("Conectado: "+u.email+" "));
       c.appendChild(btn("Sair",async function(){await db.auth.signOut();location.hash="#inicio";atualizaConta()}));
     }
+    renderInicio(u);
+  }
+  function renderInicio(u){
+    var b=$("cta-inicio");b.textContent="";
+    if(!u){b.appendChild(link("Criar minha conta ou entrar","#entrar"));b.appendChild(link("Ver eventos","#eventos","alt"));return}
+    if(!estado||!estado.tem_cadastro){b.appendChild(link("Completar meu cadastro","#cadastro"));return}
+    b.appendChild(link("Minha área","#minha-area"));
+    if(estado.situacao!=="ativo"&&estado.situacao!=="tolerancia")b.appendChild(link("Quero ser sócio (R$ 30 por mês)","#socio","alt"));
+    b.appendChild(link("Ver eventos","#eventos","alt"));
   }
   var modo="entrar";
   function setModo(m){
@@ -551,7 +575,9 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(modo==="criar"&&!r.data.session){erro("e-ent","Conta criada. Confirme seu e-mail para entrar.");return}
     erro("e-ent","");$("l-senha").value="";
     await atualizaConta();
-    location.hash=modo==="criar"?"#cadastro":"#minha-area";
+    if(modo==="criar"){location.hash="#cadastro";return}
+    var pc=await db.rpc("meu_painel");
+    location.hash=(pc.data&&pc.data.tem_cadastro)?"#minha-area":"#cadastro";
   });
 
   /* minha área (precisa estar logado) */
@@ -708,36 +734,86 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   async function renderHistorias(){
     var box=$("lista-hist"),msg=$("hist-msg");box.textContent="";msg.textContent="";
     var u=await usuario();
-    if(!u){msg.textContent="As histórias são para quem tem conta. Entre ou crie a sua para ler.";return}
-    var r=await db.from("historias").select("titulo,texto,link,criado_em").order("criado_em",{ascending:false});
+    if(!u){msg.textContent="As entrevistas são para quem tem conta. Entre ou crie a sua para ver.";return}
+    var pc=await db.rpc("meu_painel");
+    if(!(pc.data&&pc.data.tem_cadastro)){msg.textContent="Complete seu cadastro para ver as entrevistas.";box.appendChild(link("Completar meu cadastro","#cadastro"));return}
+    var r=await db.from("historias").select("titulo,texto,link,video_path,criado_em").order("criado_em",{ascending:false});
     if(r.error){msg.textContent=FALHA;return}
     var l=r.data||[];
-    if(!l.length){msg.textContent="Em breve, as primeiras histórias.";return}
-    l.forEach(function(x){
-      var c=h("article","card ev");
+    if(!l.length){msg.textContent="Em breve, as primeiras entrevistas.";return}
+    for(var k=0;k<l.length;k++){
+      var x=l[k],c=h("article","card ev");
       c.appendChild(h("h3",0,x.titulo));
       c.appendChild(h("div","when",dBR((x.criado_em||"").slice(0,10))));
-      var t=h("div","sobre");x.texto.split(/\n{2,}/).forEach(function(p){t.appendChild(h("p",0,p.trim()))});c.appendChild(t);
+      if(x.video_path){
+        var sg=await db.storage.from("entrevistas").createSignedUrl(x.video_path,3600);
+        if(sg.data&&sg.data.signedUrl){var v=h("video");v.src=sg.data.signedUrl;v.controls=true;v.preload="metadata";v.setAttribute("playsinline","");v.style.cssText="width:100%;max-height:70vh;border-radius:12px;background:#000;margin:6px 0";c.appendChild(v)}
+        else c.appendChild(h("p","small","Não foi possível carregar o vídeo."));
+      }
+      var t=h("div","sobre");x.texto.split(/\n{2,}/).forEach(function(q){t.appendChild(h("p",0,q.trim()))});c.appendChild(t);
       if(x.link&&/^https:\/\//i.test(x.link)){
         var id=ytId(x.link);
         if(id){var f=h("iframe");f.src="https://www.youtube-nocookie.com/embed/"+id;f.title="Vídeo: "+x.titulo;f.loading="lazy";f.allowFullscreen=true;f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:12px;margin-top:8px";c.appendChild(f)}
         else{var a=h("a","btn alt","Ver mais");a.href=x.link;a.target="_blank";a.rel="noopener noreferrer";c.appendChild(a)}
       }
       box.appendChild(c);
-    });
+    }
   }
-  function limpaHist(){editHist=null;$("f-hist").reset();$("h-salvar").textContent="Publicar história";$("h-cancelar").hidden=true}
+  var editVideo=null;
+  function limpaHist(){editHist=null;editVideo=null;$("f-hist").reset();$("h-salvar").textContent="Publicar entrevista";$("h-cancelar").hidden=true}
   $("h-cancelar").addEventListener("click",limpaHist);
   $("f-hist").addEventListener("submit",async function(e){
     e.preventDefault();
-    var t=$("h-titulo").value.trim(),x=$("h-texto").value.trim(),l=$("h-link").value.trim();
+    var t=$("h-titulo").value.trim(),x=$("h-texto").value.trim(),l=$("h-link").value.trim(),vf=$("h-video").files[0];
     if(!t||!x){erro("e-hist","Preencha o título e o texto.");return}
     if(l&&!/^https:\/\//i.test(l)){erro("e-hist","O link precisa começar com https://");return}
+    if(vf&&vf.size>50*1024*1024){erro("e-hist","O vídeo tem mais de 50 MB. Reduza a qualidade ou o tamanho antes de enviar.");return}
     if(!$("h-ok").checked){erro("e-hist","Marque que você tem a autorização por escrito da pessoa entrevistada.");return}
-    var dados={titulo:t,texto:x,link:l||null};
+    var dados={titulo:t,texto:x,link:l||null},bs=$("h-salvar");
+    if(vf){
+      bs.disabled=true;$("ok-hist").textContent="Enviando o vídeo... aguarde, pode demorar.";
+      var ext=((vf.name.split(".").pop())||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
+      var path=Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+      var up=await db.storage.from("entrevistas").upload(path,vf,{contentType:vf.type||"video/mp4"});
+      bs.disabled=false;
+      if(up.error){erro("e-hist","Não foi possível enviar o vídeo. Confira o tamanho (até 50 MB), o formato (MP4) e a internet.");$("ok-hist").textContent="";return}
+      dados.video_path=path;
+      if(editVideo)await db.storage.from("entrevistas").remove([editVideo]);
+    }
     var r=editHist?await db.from("historias").update(dados).eq("id",editHist):await db.from("historias").insert(dados);
-    if(r.error){erro("e-hist",FALHA);return}
-    erro("e-hist","");limpaHist();$("ok-hist").textContent="História salva.";renderAdmin();
+    if(r.error){erro("e-hist",FALHA);$("ok-hist").textContent="";return}
+    erro("e-hist","");limpaHist();$("ok-hist").textContent="Entrevista salva.";renderAdmin();
+  });
+
+  /* redes sociais da CAPEDAC */
+  var REDES=[["instagram","Instagram"],["facebook","Facebook"],["youtube","YouTube"],["whatsapp","WhatsApp"]];
+  async function renderRedes(){
+    var alvos=[$("redes-rodape"),$("redes-sobre")];
+    alvos.forEach(function(a){a.textContent=""});
+    if(!db)return;
+    var r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
+    var d={};try{d=JSON.parse((r.data&&r.data.conteudo)||"{}")}catch(e){}
+    var itens=[];
+    REDES.forEach(function(n){
+      var v=(d[n[0]]||"").trim();if(!v)return;
+      var href=v;
+      if(n[0]==="whatsapp"){var nn=dig(v);if(nn.length<=11)nn="55"+nn;href="https://wa.me/"+nn}
+      if(!/^https:\/\//i.test(href))return;
+      itens.push([n[1],href]);
+    });
+    if(!itens.length)return;
+    alvos.forEach(function(a){
+      var row=h("div","cta");row.style.flexDirection="row";row.style.flexWrap="wrap";
+      itens.forEach(function(i){var k=h("a","btn alt mini",i[0]);k.href=i[1];k.target="_blank";k.rel="noopener noreferrer";row.appendChild(k)});
+      a.appendChild(h("p","small","Siga a CAPEDAC:"));a.appendChild(row);
+    });
+  }
+  $("r-salvar").addEventListener("click",async function(){
+    var d={},ok=true;
+    REDES.forEach(function(n){var v=$("r-"+n[0]).value.trim();if(n[0]!=="whatsapp"&&v&&!/^https:\/\//i.test(v))ok=false;d[n[0]]=v});
+    if(!ok){$("ok-redes").textContent="Os links precisam começar com https://";return}
+    var r=await db.from("sobre").upsert({id:"redes",conteudo:JSON.stringify(d),atualizado_em:new Date().toISOString()});
+    $("ok-redes").textContent=r.error?FALHA:"Redes salvas.";renderRedes();
   });
 
   /* painel da diretoria */
@@ -783,13 +859,16 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("a-ben").value=(r.data||[]).map(function(x){return x.texto}).join("\n");
     r=await db.from("sobre").select("conteudo").eq("id","principal").maybeSingle();
     $("a-sobre").value=(r.data&&r.data.conteudo)||"";
+    r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
+    var rd={};try{rd=JSON.parse((r.data&&r.data.conteudo)||"{}")}catch(e){}
+    REDES.forEach(function(n){$("r-"+n[0]).value=rd[n[0]]||""});
     r=await db.from("historias").select("*").order("criado_em",{ascending:false});
     var hx=$("a-hists");hx.textContent="";
     (r.data||[]).forEach(function(hs){
       var c=h("div","card row");
-      c.appendChild(h("span",0,hs.titulo));
-      c.appendChild(btn("Editar",function(){editHist=hs.id;$("h-titulo").value=hs.titulo;$("h-texto").value=hs.texto;$("h-link").value=hs.link||"";$("h-ok").checked=false;$("h-salvar").textContent="Salvar alterações";$("h-cancelar").hidden=false;$("f-hist").scrollIntoView({behavior:"smooth"})}));
-      c.appendChild(btn("Remover",async function(){if(!confirm("Remover esta história?"))return;await db.from("historias").delete().eq("id",hs.id);renderAdmin()}));
+      c.appendChild(h("span",0,hs.titulo+(hs.video_path?" (com vídeo)":"")));
+      c.appendChild(btn("Editar",function(){editHist=hs.id;editVideo=hs.video_path||null;$("h-titulo").value=hs.titulo;$("h-texto").value=hs.texto;$("h-link").value=hs.link||"";$("h-video").value="";$("h-ok").checked=false;$("h-salvar").textContent="Salvar alterações";$("h-cancelar").hidden=false;$("f-hist").scrollIntoView({behavior:"smooth"})}));
+      c.appendChild(btn("Remover",async function(){if(!confirm("Remover esta entrevista (e o vídeo)?"))return;if(hs.video_path)await db.storage.from("entrevistas").remove([hs.video_path]);await db.from("historias").delete().eq("id",hs.id);renderAdmin()}));
       hx.appendChild(c);
     });
     r=await db.from("parceiros").select("*").order("criado_em",{ascending:false});
@@ -829,7 +908,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("ok-ben").textContent="Benefícios salvos.";
   });
 
-  setModo("entrar");atualizaConta();route();
+  setModo("entrar");atualizaConta();renderRedes();route();
 })();
 </script>
 </body>
