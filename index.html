@@ -89,8 +89,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 <nav aria-label="Principal">
   <a href="#inicio" data-v="inicio">Início</a>
   <a href="#eventos" data-v="eventos">Eventos</a>
-  <a href="#cadastro" data-v="cadastro">Cadastro</a>
-  <a href="#socio" data-v="socio">Seja sócio</a>
+  <a href="#historias" data-v="historias" id="n-hist" hidden>Histórias</a>
   <a href="#parceiros" data-v="parceiros">Parceiros</a>
   <a href="#doar" data-v="doar">Doar</a>
   <a href="#sobre" data-v="sobre">Sobre</a>
@@ -262,6 +261,13 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <div id="sobre-box" class="sobre"></div>
 </section>
 
+<section class="view" id="v-historias" aria-labelledby="t-hist">
+  <h1 id="t-hist">Histórias</h1>
+  <p class="lead">Entrevistas e histórias de pessoas com deficiência, contadas para a comunidade da CAPEDAC.</p>
+  <p class="lead" id="hist-msg"></p>
+  <div id="lista-hist"></div>
+</section>
+
 <section class="view" id="v-eventos" aria-labelledby="t-ev">
   <h1 id="t-ev">Eventos e festas</h1>
   <div id="lista-ev"></div>
@@ -314,6 +320,20 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
       <div class="cta"><button class="btn" id="a-salvar-ben" type="button">Salvar benefícios</button></div>
       <p class="ok" id="ok-ben" role="status"></p>
     </div>
+    <h2>Histórias (feed)</h2>
+    <form id="f-hist" class="card" novalidate>
+      <label for="h-titulo" style="margin-top:0">Título *</label>
+      <input id="h-titulo" maxlength="150">
+      <label for="h-texto">Texto *</label>
+      <textarea id="h-texto" rows="10"></textarea>
+      <label for="h-link">Link de vídeo ou publicação <span class="hint">(opcional; vídeo do YouTube aparece direto no feed)</span></label>
+      <input id="h-link" inputmode="url" placeholder="https://...">
+      <label class="check" for="h-ok"><input type="checkbox" id="h-ok"><span>Tenho autorização por escrito da pessoa entrevistada para publicar esta história.</span></label>
+      <p class="err" id="e-hist" role="alert"></p>
+      <div class="cta"><button class="btn" id="h-salvar" type="submit">Publicar história</button><button class="btn alt" id="h-cancelar" type="button" hidden>Cancelar edição</button></div>
+      <p class="ok" id="ok-hist" role="status"></p>
+    </form>
+    <div id="a-hists"></div>
     <h2>Página Sobre</h2>
     <div class="card">
       <label for="a-sobre" style="margin-top:0">Texto da página (deixe uma linha em branco entre parágrafos)</label>
@@ -360,7 +380,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
     document.querySelectorAll("nav a").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
@@ -371,6 +391,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(v==="minha-area")renderMinhaArea();
     if(v==="parceiros"){renderParceiros();atualizaConta()}
     if(v==="sobre")renderSobre();
+    if(v==="historias")renderHistorias();
     if(v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
   window.addEventListener("hashchange",route);
@@ -458,14 +479,35 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     var box=$("lista-ev");box.textContent="";
     if(!db){box.appendChild(h("p","lead",OFF));return}
     var r=await db.from("eventos").select("*").order("data");
-    var ev=r.data||[];
     if(r.error){box.appendChild(h("p","lead",FALHA));return}
+    var ev=r.data||[];
     if(!ev.length){box.appendChild(h("p","lead","Nenhum evento publicado ainda. Volte em breve."));return}
+    var hoje=new Date().toISOString().slice(0,10);
+    ev=ev.filter(function(e){return e.data>=hoje}).concat(ev.filter(function(e){return e.data<hoje}).reverse());
+    var u=await usuario(),res={};
+    if(u){var x=await db.rpc("presencas_resumo");(x.data||[]).forEach(function(p){res[p.evento_id]=p})}
     ev.forEach(function(e){
-      var c=h("article","card ev");
+      var c=h("article","card ev"),p=res[e.id]||{};
       c.appendChild(h("h3",0,e.titulo));
       c.appendChild(h("div","when",dBR(e.data)+(e.hora?" às "+e.hora:"")+(e.local?" – "+e.local:"")));
       if(e.descricao)c.appendChild(h("p",0,e.descricao));
+      if(e.data<hoje){c.appendChild(h("p","small","Evento já realizado."));box.appendChild(c);return}
+      if(!u){c.appendChild(h("p","small","Entre na sua conta para confirmar presença."));box.appendChild(c);return}
+      if(p.total>0)c.appendChild(h("p","small",p.total+" pessoa(s) confirmada(s)."));
+      if(p.minha){
+        c.appendChild(h("p","ok","Presença confirmada"+(p.minha_leva?" – você vai levar: "+p.minha_leva:"")+"."));
+        c.appendChild(btn("Cancelar minha presença",async function(){await db.from("presencas").delete().eq("evento_id",e.id).eq("user_id",u.id);renderEventos()}));
+      }else{
+        var lb=h("label",0,"O que você pode levar para contribuir? (opcional)");lb.htmlFor="lv-"+e.id;
+        var inp=h("input");inp.id="lv-"+e.id;inp.maxLength=200;inp.placeholder="Ex.: um bolo, refrigerante...";
+        var er=h("p","err");er.setAttribute("role","alert");
+        c.appendChild(lb);c.appendChild(inp);c.appendChild(er);
+        c.appendChild(btn("Confirmar minha presença",async function(){
+          var y=await db.rpc("confirmar_presenca",{p_evento:e.id,p_leva:inp.value});
+          if(y.error){er.textContent=/cadastro/.test(y.error.message)?"Complete seu cadastro antes de confirmar presença.":FALHA;return}
+          renderEventos();
+        },"red"));
+      }
       box.appendChild(c);
     });
   }
@@ -478,7 +520,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   }
   async function atualizaConta(){
     var u=await usuario();
-    $("n-entrar").hidden=!!u;$("n-minha").hidden=!u;
+    $("n-entrar").hidden=!!u;$("n-minha").hidden=!u;$("n-hist").hidden=!u;
     $("f-cad").hidden=!u;$("gate-cad").hidden=!!u;
     $("f-soc").hidden=!u;$("gate-soc").hidden=!!u;$("f-par").hidden=!u;$("gate-par").hidden=!!u;
     var c=$("conta");c.textContent="";
@@ -660,6 +702,44 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("ok-x").textContent="Arquivo gerado. Procure em Downloads.";
   });
 
+  /* histórias (feed) */
+  var editHist=null;
+  function ytId(u){var m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/))([\w-]{11})/);return m?m[1]:null}
+  async function renderHistorias(){
+    var box=$("lista-hist"),msg=$("hist-msg");box.textContent="";msg.textContent="";
+    var u=await usuario();
+    if(!u){msg.textContent="As histórias são para quem tem conta. Entre ou crie a sua para ler.";return}
+    var r=await db.from("historias").select("titulo,texto,link,criado_em").order("criado_em",{ascending:false});
+    if(r.error){msg.textContent=FALHA;return}
+    var l=r.data||[];
+    if(!l.length){msg.textContent="Em breve, as primeiras histórias.";return}
+    l.forEach(function(x){
+      var c=h("article","card ev");
+      c.appendChild(h("h3",0,x.titulo));
+      c.appendChild(h("div","when",dBR((x.criado_em||"").slice(0,10))));
+      var t=h("div","sobre");x.texto.split(/\n{2,}/).forEach(function(p){t.appendChild(h("p",0,p.trim()))});c.appendChild(t);
+      if(x.link&&/^https:\/\//i.test(x.link)){
+        var id=ytId(x.link);
+        if(id){var f=h("iframe");f.src="https://www.youtube-nocookie.com/embed/"+id;f.title="Vídeo: "+x.titulo;f.loading="lazy";f.allowFullscreen=true;f.style.cssText="width:100%;aspect-ratio:16/9;border:0;border-radius:12px;margin-top:8px";c.appendChild(f)}
+        else{var a=h("a","btn alt","Ver mais");a.href=x.link;a.target="_blank";a.rel="noopener noreferrer";c.appendChild(a)}
+      }
+      box.appendChild(c);
+    });
+  }
+  function limpaHist(){editHist=null;$("f-hist").reset();$("h-salvar").textContent="Publicar história";$("h-cancelar").hidden=true}
+  $("h-cancelar").addEventListener("click",limpaHist);
+  $("f-hist").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var t=$("h-titulo").value.trim(),x=$("h-texto").value.trim(),l=$("h-link").value.trim();
+    if(!t||!x){erro("e-hist","Preencha o título e o texto.");return}
+    if(l&&!/^https:\/\//i.test(l)){erro("e-hist","O link precisa começar com https://");return}
+    if(!$("h-ok").checked){erro("e-hist","Marque que você tem a autorização por escrito da pessoa entrevistada.");return}
+    var dados={titulo:t,texto:x,link:l||null};
+    var r=editHist?await db.from("historias").update(dados).eq("id",editHist):await db.from("historias").insert(dados);
+    if(r.error){erro("e-hist",FALHA);return}
+    erro("e-hist","");limpaHist();$("ok-hist").textContent="História salva.";renderAdmin();
+  });
+
   /* painel da diretoria */
   async function checaAdmin(){
     if(!db)return false;
@@ -673,11 +753,17 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("a-login").hidden=on;$("a-painel").hidden=!on;
     if(!on)return;
     var r=await db.from("eventos").select("*").order("data"),bx=$("a-evs");bx.textContent="";
-    if(!(r.data||[]).length)bx.appendChild(h("p","small","Nenhum evento publicado."));
-    (r.data||[]).forEach(function(e){
-      var c=h("div","card row");
-      c.appendChild(h("span",0,dBR(e.data)+" – "+e.titulo));
-      c.appendChild(btn("Remover",async function(){await db.from("eventos").delete().eq("id",e.id);renderAdmin()}));
+    var pr=await db.from("presencas").select("evento_id,nome,vai_levar").order("criado_em");
+    var evl=r.data||[];
+    if(!evl.length)bx.appendChild(h("p","small","Nenhum evento publicado."));
+    evl.forEach(function(e){
+      var c=h("div","card"),row=h("div","row");
+      row.appendChild(h("strong",0,dBR(e.data)+" – "+e.titulo));
+      row.appendChild(btn("Remover",async function(){if(!confirm("Remover este evento e as confirmações dele?"))return;await db.from("eventos").delete().eq("id",e.id);renderAdmin()}));
+      c.appendChild(row);
+      var ps=(pr.data||[]).filter(function(p){return p.evento_id===e.id});
+      c.appendChild(h("p","small",ps.length+" pessoa(s) confirmada(s)"));
+      ps.forEach(function(p){c.appendChild(h("p","small","• "+p.nome+(p.vai_levar?" – vai levar: "+p.vai_levar:"")))});
       bx.appendChild(c);
     });
     r=await db.from("socios").select("*").order("criado_em",{ascending:false});
@@ -697,6 +783,15 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("a-ben").value=(r.data||[]).map(function(x){return x.texto}).join("\n");
     r=await db.from("sobre").select("conteudo").eq("id","principal").maybeSingle();
     $("a-sobre").value=(r.data&&r.data.conteudo)||"";
+    r=await db.from("historias").select("*").order("criado_em",{ascending:false});
+    var hx=$("a-hists");hx.textContent="";
+    (r.data||[]).forEach(function(hs){
+      var c=h("div","card row");
+      c.appendChild(h("span",0,hs.titulo));
+      c.appendChild(btn("Editar",function(){editHist=hs.id;$("h-titulo").value=hs.titulo;$("h-texto").value=hs.texto;$("h-link").value=hs.link||"";$("h-ok").checked=false;$("h-salvar").textContent="Salvar alterações";$("h-cancelar").hidden=false;$("f-hist").scrollIntoView({behavior:"smooth"})}));
+      c.appendChild(btn("Remover",async function(){if(!confirm("Remover esta história?"))return;await db.from("historias").delete().eq("id",hs.id);renderAdmin()}));
+      hx.appendChild(c);
+    });
     r=await db.from("parceiros").select("*").order("criado_em",{ascending:false});
     var px=$("a-pars");px.textContent="";
     if(!(r.data||[]).length)px.appendChild(h("p","small","Nenhuma proposta de parceiro."));
