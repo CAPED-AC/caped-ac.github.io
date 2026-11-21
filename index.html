@@ -102,6 +102,7 @@ html[data-contraste="alto"]:root{color-scheme:dark}
 .sino{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--on-navy);color:var(--navy);border:2px solid var(--on-navy);text-decoration:none}
 .sino svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sino .badge{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--red);color:#fff;font-size:.78rem;font-weight:700;display:grid;place-items:center}
+.btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-right:10px;flex:none}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -320,7 +321,6 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 <section class="view" id="v-sobre" aria-labelledby="t-sobre">
   <h1 id="t-sobre">Sobre a CAPEDAC</h1>
   <div id="sobre-box" class="sobre"></div>
-  <div id="redes-sobre"></div>
 </section>
 
 <section class="view" id="v-historias" aria-labelledby="t-hist">
@@ -498,7 +498,7 @@ Parceiros: os dados da proposta que você enviar.</p>
 </section>
 
 </main>
-<footer><div id="redes-rodape"></div><p id="conta" class="small"></p><p class="small"><a href="#privacidade">Política de privacidade</a></p><a href="#admin">Acesso da diretoria</a></footer>
+<footer><p id="conta" class="small"></p><p class="small"><a href="#privacidade">Política de privacidade</a></p><a href="#admin">Acesso da diretoria</a></footer>
 <div class="tabbar" role="navigation" aria-label="Principal">
   <button type="button" class="tab" id="tb-menu" aria-controls="drawer" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Menu</span></button>
   <a href="#eventos" class="tab" data-v="eventos" id="n-eventos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Eventos</span></a>
@@ -1003,9 +1003,15 @@ Parceiros: os dados da proposta que você enviar.</p>
   });
 
   /* redes sociais da CAPEDAC */
+  var ICONES={
+    instagram:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="0.6"/></svg>',
+    facebook:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
+    youtube:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><path d="M9.75 15.02 15.5 11.75 9.75 8.48z"/></svg>',
+    whatsapp:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>'
+  };
   var REDES=[["instagram","Instagram"],["facebook","Facebook"],["youtube","YouTube"],["whatsapp","WhatsApp"]];
   async function renderRedes(){
-    var alvos=[$("redes-rodape"),$("redes-sobre"),$("redes-inicio")];
+    var alvos=[$("redes-inicio")];
     alvos.forEach(function(a){a.textContent=""});
     var d={instagram:"https://www.instagram.com/capedac_oficial",facebook:"https://www.facebook.com/share/1Enayt7owX/"};
     if(db){
@@ -1018,12 +1024,12 @@ Parceiros: os dados da proposta que você enviar.</p>
       var href=v;
       if(n[0]==="whatsapp"){var nn=dig(v);if(nn.length<=11)nn="55"+nn;href="https://wa.me/"+nn}
       if(!/^https:\/\//i.test(href))return;
-      itens.push([n[1],href]);
+      itens.push([n[1],href,n[0]]);
     });
     if(!itens.length)return;
     alvos.forEach(function(a){
       var row=h("div","cta");row.style.flexDirection="row";row.style.flexWrap="wrap";
-      itens.forEach(function(i){var k=h("a","btn alt mini",i[0]);k.href=i[1];k.target="_blank";k.rel="noopener noreferrer";row.appendChild(k)});
+      itens.forEach(function(i){var k=h("a","btn alt");k.innerHTML=ICONES[i[2]]||"";k.appendChild(document.createTextNode(i[0]));k.href=i[1];k.target="_blank";k.rel="noopener noreferrer";row.appendChild(k)});
       a.appendChild(h("p","small","Siga a CAPEDAC:"));a.appendChild(row);
     });
   }
