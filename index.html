@@ -468,16 +468,6 @@ Parceiros: os dados da proposta que você enviar.</p>
       <p class="ok" id="ok-hist" role="status"></p>
     </form>
     <div id="a-hists"></div>
-    <h2>Redes sociais da CAPEDAC</h2>
-    <div class="card">
-      <p class="small">Cole o link completo (começando com https://). No WhatsApp, só o número com DDD. Deixe em branco o que a CAPEDAC não tem.</p>
-      <label for="r-instagram">Instagram</label><input id="r-instagram" inputmode="url" placeholder="https://instagram.com/...">
-      <label for="r-facebook">Facebook</label><input id="r-facebook" inputmode="url" placeholder="https://facebook.com/...">
-      <label for="r-youtube">YouTube</label><input id="r-youtube" inputmode="url" placeholder="https://youtube.com/...">
-      <label for="r-whatsapp">WhatsApp</label><input id="r-whatsapp" inputmode="tel" placeholder="68 90000-0000">
-      <div class="cta"><button class="btn" id="r-salvar" type="button">Salvar redes</button></div>
-      <p class="ok" id="ok-redes" role="status"></p>
-    </div>
     <h2>Página Sobre</h2>
     <div class="card">
       <label for="a-sobre" style="margin-top:0">Texto da página (deixe uma linha em branco entre parágrafos)</label>
@@ -1014,10 +1004,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     var alvos=[$("redes-inicio")];
     alvos.forEach(function(a){a.textContent=""});
     var d={instagram:"https://www.instagram.com/capedac_oficial",facebook:"https://www.facebook.com/share/1Enayt7owX/"};
-    if(db){
-      var r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
-      try{if(r.data&&r.data.conteudo)d=Object.assign(d,JSON.parse(r.data.conteudo))}catch(e){}
-    }
     var itens=[];
     REDES.forEach(function(n){
       var v=(d[n[0]]||"").trim();if(!v)return;
@@ -1033,13 +1019,6 @@ Parceiros: os dados da proposta que você enviar.</p>
       a.appendChild(h("p","small","Siga a CAPEDAC:"));a.appendChild(row);
     });
   }
-  $("r-salvar").addEventListener("click",async function(){
-    var d={},ok=true;
-    REDES.forEach(function(n){var v=$("r-"+n[0]).value.trim();if(n[0]!=="whatsapp"&&v&&!/^https:\/\//i.test(v))ok=false;d[n[0]]=v});
-    if(!ok){$("ok-redes").textContent="Os links precisam começar com https://";return}
-    var r=await db.from("sobre").upsert({id:"redes",conteudo:JSON.stringify(d),atualizado_em:new Date().toISOString()});
-    $("ok-redes").textContent=r.error?FALHA:"Redes salvas.";renderRedes();
-  });
 
   /* consultas e exames (sócio em dia) */
   async function renderSaude(){
@@ -1060,10 +1039,14 @@ Parceiros: os dados da proposta que você enviar.</p>
       c.appendChild(h("p",0,p.descricao));
       var st=p.status==="marcado"?"Marcado para "+dBR(p.data_marcada)+(p.local_marcado?" – "+p.local_marcado:""):p.status==="cancelado"?"Não foi possível marcar"+(p.local_marcado?": "+p.local_marcado:""):"Aguardando a CAPEDAC marcar";
       c.appendChild(h("p",p.status==="marcado"?"ok":"small",st));
-      if(p.status==="pendente")c.appendChild(btn("Cancelar pedido",async function(){
-        if(!confirm("Cancelar este pedido e apagar a foto?"))return;
+      var rot=p.status==="cancelado"?"Remover da lista":"Cancelar pedido";
+      var pergunta=p.status==="marcado"?"Cancelar este atendimento já marcado? A CAPEDAC será avisada e a foto será apagada.":"Remover este pedido e apagar a foto?";
+      c.appendChild(btn(rot,async function(){
+        if(!confirm(pergunta))return;
+        var d2=await db.from("pedidos_saude").delete().eq("id",p.id);
+        if(d2.error){alert(FALHA);return}
         if(p.foto_path)await db.storage.from("exames").remove([p.foto_path]);
-        await db.from("pedidos_saude").delete().eq("id",p.id);renderSaude()}));
+        renderSaude()}));
       box.appendChild(c);
     });
   }
@@ -1215,9 +1198,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     $("a-ben").value=(r.data||[]).map(function(x){return x.texto}).join("\n");
     r=await db.from("sobre").select("conteudo").eq("id","principal").maybeSingle();
     $("a-sobre").value=(r.data&&r.data.conteudo)||"";
-    r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
-    var rd={};try{rd=JSON.parse((r.data&&r.data.conteudo)||"{}")}catch(e){}
-    REDES.forEach(function(n){$("r-"+n[0]).value=rd[n[0]]||""});
     var ps2=await db.from("pedidos_saude").select("*").order("criado_em",{ascending:false});
     var mem=await db.from("membros").select("user_id,nome,telefone"),mapa={};
     (mem.data||[]).forEach(function(m){mapa[m.user_id]=m});
