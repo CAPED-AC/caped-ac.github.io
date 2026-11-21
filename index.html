@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <title>CAPEDAC – Centro de Apoio à Pessoa com Deficiência Física do Acre</title>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -92,6 +93,10 @@ nav a.novo::after{content:"";display:inline-block;width:11px;height:11px;border-
 .perfil-topo{display:flex;align-items:center;gap:16px;margin:8px 0 16px}
 .perfil-topo strong{font-size:1.35rem;line-height:1.25;display:block;margin-bottom:8px}
 @media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+:root{color-scheme:light dark}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+html[data-contraste="alto"]:root{color-scheme:dark}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -208,6 +213,13 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <p class="err" id="e-pix" role="alert"></p>
   </form>
 
+  <div id="c-cupom" class="card" hidden>
+    <h2 style="margin-top:0">Tem um cupom?</h2>
+    <label for="cupom-cod">Código do cupom</label>
+    <input id="cupom-cod" autocomplete="off" autocapitalize="characters" maxlength="40">
+    <p class="err" id="e-cupom" role="alert"></p>
+    <div class="cta"><button class="btn alt" id="cupom-ok" type="button">Aplicar cupom</button></div>
+  </div>
   <div id="pix" class="card" hidden aria-live="polite">
     <h2 style="margin-top:0">Pague R$ 30,00 pelo Pix</h2>
     <p>Abra o app do seu banco, escolha <b>Pix</b> e leia o QR code.</p>
@@ -650,7 +662,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(u){var pp=await db.rpc("meu_painel");if(pp.data){estado=pp.data;cad=!!pp.data.tem_cadastro}}
     $("n-entrar").hidden=!!u;$("n-minha").hidden=!u;$("n-hist").hidden=!u;
     $("f-cad").hidden=!u;$("gate-cad").hidden=!!u;$("cad-nota").hidden=!cad;
-    $("f-soc").hidden=!u||!cad;$("gate-soc").hidden=!!u;$("gate-soc2").hidden=!(u&&!cad);$("f-par").hidden=!u;$("gate-par").hidden=!!u;
+    $("f-soc").hidden=!u||!cad;$("c-cupom").hidden=!u||!cad;$("gate-soc").hidden=!!u;$("gate-soc2").hidden=!(u&&!cad);$("f-par").hidden=!u;$("gate-par").hidden=!!u;
     var c=$("conta");c.textContent="";
     if(u){
       c.appendChild(document.createTextNode("Conectado: "+((estado&&estado.nome)||u.email)+" "));
@@ -712,7 +724,7 @@ Parceiros: os dados da proposta que você enviar.</p>
       var cart=h("div","cart"),im=h("img");im.src=LOGO;im.alt="";cart.appendChild(im);
       var tx=h("div");tx.appendChild(h("div","tag","SÓCIO(A) CAPEDAC"));tx.appendChild(h("strong",0,d.nome));
       tx.appendChild(h("div",0,"Nº "+String(d.numero||0).padStart(4,"0")));
-      tx.appendChild(h("div",0,"Válido até "+dBR(d.pago_ate)+(sit==="tolerancia"?" (vencida)":"")));
+      tx.appendChild(h("div",0,"Válido "+validade(d.pago_ate)+(sit==="tolerancia"?" (vencida)":"")));
       cart.appendChild(tx);ct.appendChild(cart);
       ct.appendChild(h("p","small","Dica: tire um print da tela para guardar sua carteirinha."));
     }
@@ -721,7 +733,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     else{cad.appendChild(h("p",0,"Você ainda não preencheu seus dados."));cad.appendChild(link("Completar meu cadastro","#cadastro"))}
     so.appendChild(titulo("Sócio da CAPEDAC"));
     if(sit==="ativo"){
-      so.appendChild(h("p","ok","Sócio ativo até "+dBR(d.pago_ate)+"."));
+      so.appendChild(h("p","ok","Sócio ativo "+validade(d.pago_ate)+"."));
       if(d.pendente)so.appendChild(h("p",0,"Sua renovação aguarda confirmação."));
       else if(dias<=10)so.appendChild(link("Pagar a próxima mensalidade","#socio","red"));
     }else if(sit==="tolerancia"){
@@ -1082,6 +1094,17 @@ Parceiros: os dados da proposta que você enviar.</p>
     el.appendChild(a);
   }
 
+  /* cupom */
+  function validade(d){return d&&String(d).slice(0,4)>="3000"?"sem vencimento":"até "+dBR(d)}
+  $("cupom-ok").addEventListener("click",async function(){
+    var cod=$("cupom-cod").value.trim();
+    if(cod.length<3){erro("e-cupom","Digite o código do cupom.");return}
+    if(!db){erro("e-cupom",OFF);return}
+    var r=await db.rpc("resgatar_cupom",{p_codigo:cod});
+    if(r.error){var m=r.error.message||"";erro("e-cupom",/cadastro/.test(m)?"Complete seu cadastro antes de usar o cupom.":/ja_usou/.test(m)?"Você já usou um cupom.":/invalido/.test(m)?"Cupom inválido ou esgotado.":FALHA);return}
+    erro("e-cupom","");$("cupom-cod").value="";location.hash="#minha-area";
+  });
+
   /* painel da diretoria */
   async function checaAdmin(){
     if(!db)return false;
@@ -1113,7 +1136,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(!(r.data||[]).length)sx.appendChild(h("p","small","Nenhum aviso de pagamento."));
     (r.data||[]).forEach(function(s){
       var c=h("div","card row");
-      c.appendChild(h("span",0,s.nome+" ("+s.telefone+") – "+s.status+(s.pago_ate?" até "+dBR(s.pago_ate):"")));
+      c.appendChild(h("span",0,s.nome+" ("+s.telefone+") – "+s.status+(s.pago_ate?" "+validade(s.pago_ate):"")+(s.origem==="cupom"?" [cupom]":"")));
       if(s.status!=="confirmado")c.appendChild(btn("Confirmar pagamento",async function(){var x=await db.rpc("confirmar_pagamento",{p_id:s.id});if(x.error)alert(FALHA);renderAdmin()},"red"));
       sx.appendChild(c);
     });
