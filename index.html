@@ -157,6 +157,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <h1 id="t-inicio">Juntos por mais direitos e autonomia</h1>
   <p class="lead">Faça seu cadastro na associação ou torne-se membro sócio e ajude a manter o trabalho da CAPEDAC.</p>
   <div class="cta" id="cta-inicio"></div>
+  <div id="redes-inicio" style="margin-top:20px"></div>
 </section>
 
 <section class="view" id="v-cadastro" aria-labelledby="t-cad">
@@ -1004,11 +1005,13 @@ Parceiros: os dados da proposta que você enviar.</p>
   /* redes sociais da CAPEDAC */
   var REDES=[["instagram","Instagram"],["facebook","Facebook"],["youtube","YouTube"],["whatsapp","WhatsApp"]];
   async function renderRedes(){
-    var alvos=[$("redes-rodape"),$("redes-sobre")];
+    var alvos=[$("redes-rodape"),$("redes-sobre"),$("redes-inicio")];
     alvos.forEach(function(a){a.textContent=""});
-    if(!db)return;
-    var r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
-    var d={};try{d=JSON.parse((r.data&&r.data.conteudo)||"{}")}catch(e){}
+    var d={instagram:"https://www.instagram.com/capedac_oficial",facebook:"https://www.facebook.com/share/1Enayt7owX/"};
+    if(db){
+      var r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
+      try{if(r.data&&r.data.conteudo)d=Object.assign(d,JSON.parse(r.data.conteudo))}catch(e){}
+    }
     var itens=[];
     REDES.forEach(function(n){
       var v=(d[n[0]]||"").trim();if(!v)return;
