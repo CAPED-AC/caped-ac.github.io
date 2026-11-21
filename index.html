@@ -29,7 +29,7 @@ header{background:var(--navy);color:var(--on-navy);padding:14px 20px}
 nav{max-width:760px;margin:0 auto;padding:12px 20px 0;display:flex;flex-wrap:wrap;gap:8px}
 nav a{flex:1 1 28%;text-align:center;padding:14px 8px;min-height:52px;border:2px solid var(--navy);border-radius:10px;color:var(--navy);text-decoration:none;font-weight:700;background:var(--surface)}
 nav a[aria-current="page"]{background:var(--navy);color:var(--on-navy)}
-main{max-width:760px;margin:0 auto;padding:20px 20px 48px}
+main{max-width:760px;margin:0 auto;padding:20px 20px 24px}
 h1{font-size:1.9rem;line-height:1.2;margin:.4em 0 .3em}
 h2{font-size:1.3rem;margin:1.4em 0 .4em}
 p{max-width:62ch}
@@ -53,7 +53,7 @@ textarea{width:100%;padding:10px 14px;border:2px solid var(--muted);border-radiu
 .ev{border-left:8px solid var(--red)}.ev h3{margin:0 0 4px;font-size:1.25rem}.when{font-weight:700;color:var(--navy);margin-bottom:6px}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}.row .btn{min-height:48px}
 .small{font-size:.92rem;color:var(--muted)}
-footer{max-width:760px;margin:0 auto;padding:0 20px 32px}footer a{color:var(--muted)}
+footer{max-width:760px;margin:0 auto;padding:0 20px 140px}footer a{color:var(--muted)}
 .logo{width:52px;height:52px;border-radius:50%;flex:none;display:block}
 .hero-logo{display:block;width:min(200px,55vw);height:auto;margin:8px auto 4px}
 .acess{max-width:760px;margin:0 auto;padding:10px 20px 0;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
@@ -66,6 +66,32 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 32px}footer a{color:var(--mu
 html[data-contraste="alto"]:root{--bg:#000;--surface:#000;--ink:#fff;--muted:#fff;--navy:#ffe14d;--red:#ff8a8a;--line:#fff;--on-navy:#000;--ok:#7dff9b}
 html[data-contraste="alto"] .btn.red{color:#000}
 html[data-contraste="alto"] .card,html[data-contraste="alto"] nav a{border-width:3px}
+nav a.novo::after{content:"";display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--red);margin-left:8px}
+.av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background-color:var(--navy);background-size:cover;background-position:center;color:var(--on-navy);font-weight:700;font-size:.95rem;flex:none;text-decoration:none;overflow:hidden}
+.hd-av{margin-left:auto;width:46px;height:46px;background-color:var(--on-navy);color:var(--navy);border:2px solid var(--on-navy)}
+.av-grande{width:88px;height:88px;font-size:2rem}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:2px solid var(--line);display:flex;align-items:flex-end;justify-content:space-around;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:58px;padding:8px 2px 4px;color:var(--muted);text-decoration:none;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:none;border:0;cursor:pointer;position:relative}
+.tab svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--navy)}
+.tab .av{width:25px;height:25px;font-size:.75rem}
+.tab.novo::after{content:"";position:absolute;top:6px;left:calc(50% + 8px);width:11px;height:11px;border-radius:50%;background:var(--red)}
+.tab-fab{flex:none;width:70px;height:70px;border-radius:50%;margin-top:-34px;background:var(--surface);border:3px solid var(--navy);display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.tab-fab img{width:58px;height:58px;border-radius:50%;display:block}
+.drawer-fundo{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);background:var(--surface);color:var(--ink);z-index:31;overflow-y:auto;padding:18px 14px calc(28px + env(safe-area-inset-bottom,0px));border-right:2px solid var(--line);transform:translateX(-100%);visibility:hidden;transition:transform .25s,visibility .25s}
+.drawer.aberto{transform:none;visibility:visible}
+.drawer .item{display:flex;align-items:center;min-height:52px;padding:10px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:700}
+.drawer .item[aria-current="page"]{background:var(--bg);color:var(--navy)}
+.drawer a.novo::after{content:"";width:11px;height:11px;border-radius:50%;background:var(--red);margin-left:10px}
+.drawer h2{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:20px 12px 8px}
+.dr-topo{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.dr-user{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--bg);margin-bottom:8px}
+.seg{display:flex;gap:8px;flex-wrap:wrap;padding:0 4px}
+.btn[aria-pressed="true"]{background:var(--navy);color:var(--on-navy)}
+.perfil-topo{display:flex;align-items:center;gap:16px;margin:8px 0 16px}
+.perfil-topo strong{font-size:1.35rem;line-height:1.25;display:block;margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -79,23 +105,37 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <div class="bar">
     <img data-logo class="logo" alt="" width="52" height="52">
     <div><strong>CAPEDAC</strong><span>Centro de Apoio à Pessoa com Deficiência Física do Acre</span></div>
+    <a href="#entrar" class="av hd-av" id="hd-perfil" aria-label="Meu perfil"></a>
   </div>
 </header>
-<div class="acess" role="group" aria-label="Acessibilidade">
-  <button type="button" class="btn alt mini" id="ac-menos" aria-label="Diminuir o tamanho das letras">A−</button>
-  <button type="button" class="btn alt mini" id="ac-mais" aria-label="Aumentar o tamanho das letras">A+</button>
-  <button type="button" class="btn alt mini" id="ac-alto" aria-pressed="false">Alto contraste</button>
-</div>
-<nav aria-label="Principal">
-  <a href="#inicio" data-v="inicio">Início</a>
-  <a href="#eventos" data-v="eventos">Eventos</a>
-  <a href="#historias" data-v="historias" id="n-hist" hidden>Entrevista CAPEDAC</a>
-  <a href="#parceiros" data-v="parceiros">Parceiros</a>
-  <a href="#doar" data-v="doar">Doar</a>
-  <a href="#sobre" data-v="sobre">Sobre</a>
-  <a href="#minha-area" data-v="minha-area" id="n-minha" hidden>Minha área</a>
-  <a href="#entrar" data-v="entrar" id="n-entrar">Entrar</a>
-</nav>
+<div id="drawer-fundo" class="drawer-fundo" hidden></div>
+<aside id="drawer" class="drawer" aria-label="Menu principal">
+  <div class="dr-topo"><img data-logo class="logo" alt="" width="52" height="52"><strong>CAPEDAC</strong>
+    <button type="button" class="btn alt mini" id="dr-fechar" aria-label="Fechar menu" style="margin-left:auto">✕</button></div>
+  <div class="dr-user"><span class="av" aria-hidden="true"></span><strong id="dr-nome">Visitante</strong></div>
+  <a class="item" href="#inicio" data-v="inicio">Início</a>
+  <a class="item" href="#eventos" data-v="eventos">Eventos</a>
+  <a class="item" href="#historias" data-v="historias" id="n-hist" hidden>Entrevista CAPEDAC</a>
+  <a class="item" href="#parceiros" data-v="parceiros">Parceiros</a>
+  <a class="item" href="#doar" data-v="doar">Doar</a>
+  <a class="item" href="#sobre" data-v="sobre">Sobre</a>
+  <a class="item" href="#minha-area" data-v="minha-area" id="n-minha" hidden>Meu perfil</a>
+  <a class="item" href="#entrar" data-v="entrar" id="n-entrar">Entrar ou criar conta</a>
+  <a class="item" href="#privacidade" data-v="privacidade">Política de privacidade</a>
+  <h2>Aparência</h2>
+  <div class="seg" role="group" aria-label="Tema">
+    <button type="button" class="btn alt mini" id="tm-claro" data-tema="claro" aria-pressed="false">Claro</button>
+    <button type="button" class="btn alt mini" id="tm-escuro" data-tema="escuro" aria-pressed="false">Escuro</button>
+    <button type="button" class="btn alt mini" id="tm-alto" data-tema="alto" aria-pressed="false">Alto contraste</button>
+  </div>
+  <h2>Tamanho da letra</h2>
+  <div class="seg">
+    <button type="button" class="btn alt mini" id="ac-menos" aria-label="Diminuir o tamanho das letras">A−</button>
+    <button type="button" class="btn alt mini" id="ac-mais" aria-label="Aumentar o tamanho das letras">A+</button>
+  </div>
+  <button type="button" class="btn alt mini" id="dr-sair" hidden style="margin:20px 4px 0">Sair da conta</button>
+</aside>
+
 <main id="conteudo">
 
 <section class="view" id="v-inicio" aria-labelledby="t-inicio">
@@ -140,7 +180,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 
     <label class="check" for="lgpd">
       <input type="checkbox" id="lgpd">
-      <span>Autorizo a CAPEDAC a guardar meus dados para gerenciar meu cadastro de associado.</span>
+      <span>Autorizo a CAPEDAC a guardar meus dados para gerenciar meu cadastro de associado. Li a <a href="#privacidade">política de privacidade</a>.</span>
     </label>
     <p class="err" id="e-lgpd" role="alert"></p>
 
@@ -268,18 +308,81 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <div id="lista-hist"></div>
 </section>
 
+<section class="view" id="v-saude" aria-labelledby="t-saude">
+  <h1 id="t-saude">Consultas e exames</h1>
+  <p class="lead">Benefício para sócios. Peça consulta, dentista ou exame e, se quiser, anexe a foto do pedido médico. A CAPEDAC marca e avisa você aqui.</p>
+  <p class="lead" id="saude-msg"></p>
+  <form id="f-saude" class="card" hidden novalidate>
+    <label for="s-tipo">O que você precisa? *</label>
+    <select id="s-tipo"><option>Consulta médica</option><option>Dentista</option><option>Exame</option><option>Outro</option></select>
+    <label for="s-desc">Detalhes * <span class="hint">(ex.: ortopedista, exame de sangue, dor no dente)</span></label>
+    <textarea id="s-desc" rows="3" maxlength="500"></textarea>
+    <label for="s-foto">Foto do pedido ou do exame <span class="hint">(opcional)</span></label>
+    <input id="s-foto" type="file" accept="image/*">
+    <label class="check" for="s-ok"><input type="checkbox" id="s-ok"><span>Autorizo a CAPEDAC a receber e guardar estas informações e a foto, que são dados de saúde, somente para marcar o meu atendimento. Li a <a href="#privacidade">política de privacidade</a>.</span></label>
+    <p class="err" id="e-saude" role="alert"></p>
+    <div class="cta"><button class="btn red" id="s-enviar" type="submit">Enviar pedido</button></div>
+    <p class="ok" id="ok-saude" role="status"></p>
+  </form>
+  <h2>Meus pedidos</h2>
+  <div id="lista-saude"></div>
+</section>
+
+<section class="view" id="v-privacidade" aria-labelledby="t-priv">
+  <h1 id="t-priv">Política de privacidade</h1>
+  <p class="lead">Como a CAPEDAC cuida dos seus dados.</p>
+  <div class="sobre">
+    <h2>Quem cuida dos seus dados</h2>
+    <p>A CAPEDAC – Centro de Apoio à Pessoa com Deficiência Física do Acre. Para falar sobre seus dados, use os contatos da página Sobre.</p>
+    <h2>Quais dados guardamos</h2>
+    <p>Conta: e-mail e senha (a senha é guardada de forma protegida).
+Cadastro: nome, CPF, data de nascimento, telefone, cidade e, se você quiser informar, o tipo de deficiência.
+Sócio: avisos de pagamento e validade da mensalidade. Não guardamos dados de cartão.
+Eventos: sua confirmação de presença e o que você se oferece para levar.
+Consultas e exames: o pedido, os detalhes e a foto que você enviar. São dados de saúde.
+Parceiros: os dados da proposta que você enviar.</p>
+    <h2>Para que usamos</h2>
+    <p>Manter o cadastro e a lista de associados, controlar a mensalidade dos sócios, organizar eventos, marcar as consultas e os exames que os sócios pedirem e falar com você.</p>
+    <h2>Dados de saúde</h2>
+    <p>São usados somente para marcar o atendimento que você pediu, com o seu consentimento marcado no formulário. Apenas a diretoria autorizada tem acesso. Você pode cancelar um pedido pendente e a foto é apagada. Pode retirar o consentimento a qualquer momento, pedindo à CAPEDAC.</p>
+    <h2>Com quem compartilhamos</h2>
+    <p>Não vendemos seus dados. Para marcar um atendimento, podemos passar a uma clínica ou profissional parceiro apenas o necessário (nome, telefone e o pedido), e somente com a sua autorização. O site usa serviços de terceiros para funcionar: Supabase, para guardar os dados, e GitHub Pages, para hospedar o site.</p>
+    <h2>Entrevistas</h2>
+    <p>Histórias e vídeos só são publicados com autorização por escrito de quem aparece.</p>
+    <h2>Por quanto tempo guardamos</h2>
+    <p>Enquanto você for associado(a) ou enquanto o seu pedido estiver em andamento. Você pode pedir a exclusão a qualquer momento.</p>
+    <h2>Seus direitos</h2>
+    <p>Pela LGPD, você pode confirmar se tratamos seus dados, acessar, corrigir, apagar, retirar o consentimento e saber com quem compartilhamos. Peça pelos contatos da página Sobre.</p>
+    <h2>Segurança</h2>
+    <p>Login com senha, acesso restrito à diretoria e fotos e vídeos em pasta privada. Nenhum sistema é totalmente seguro, e avisaremos se houver um problema que afete você.</p>
+    <h2>Atualizações</h2>
+    <p>Esta política pode mudar. Última atualização: novembro de 2026.</p>
+  </div>
+</section>
+
 <section class="view" id="v-eventos" aria-labelledby="t-ev">
   <h1 id="t-ev">Eventos e festas</h1>
   <div id="lista-ev"></div>
 </section>
 
 <section class="view" id="v-minha-area" aria-labelledby="t-min">
-  <h1 id="t-min">Minha área</h1>
+  <h1 id="t-min">Meu perfil</h1>
+  <div class="perfil-topo" id="perfil-topo" hidden>
+    <span class="av av-grande" aria-hidden="true"></span>
+    <div>
+      <div class="small">Bem-vindo(a) de volta,</div>
+      <strong id="pf-nome"></strong>
+      <button type="button" class="btn alt mini" id="pf-trocar">Trocar foto</button>
+      <input type="file" id="pf-file" accept="image/*" hidden>
+    </div>
+  </div>
+  <p class="small" id="pf-msg" role="status"></p>
   <p class="lead" id="min-msg"></p>
   <div id="min-box" hidden>
     <div id="c-cart"></div>
     <div class="card" id="c-cad"></div>
     <div class="card" id="c-socio"></div>
+    <div class="card" id="c-saude"></div>
     <div class="card" id="c-ben"></div>
   </div>
 </section>
@@ -313,6 +416,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     </form>
     <h2>Eventos publicados</h2><div id="a-evs"></div>
     <h2>Pagamentos de sócios</h2><div id="a-socios"></div>
+    <h2>Consultas e exames (pedidos)</h2><div id="a-saude"></div>
     <h2>Benefícios dos sócios</h2>
     <div class="card">
       <label for="a-ben" style="margin-top:0">Um benefício por linha</label>
@@ -366,7 +470,14 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 </section>
 
 </main>
-<footer><div id="redes-rodape"></div><p id="conta" class="small"></p><a href="#admin">Acesso da diretoria</a></footer>
+<footer><div id="redes-rodape"></div><p id="conta" class="small"></p><p class="small"><a href="#privacidade">Política de privacidade</a></p><a href="#admin">Acesso da diretoria</a></footer>
+<div class="tabbar" role="navigation" aria-label="Principal">
+  <button type="button" class="tab" id="tb-menu" aria-controls="drawer" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Menu</span></button>
+  <a href="#eventos" class="tab" data-v="eventos" id="n-eventos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Eventos</span></a>
+  <a href="#inicio" class="tab-fab" data-v="inicio" aria-label="Início"><img data-logo alt="" width="58" height="58"></a>
+  <a href="#doar" class="tab" data-v="doar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg><span>Doar</span></a>
+  <a href="#entrar" class="tab" data-v="entrar" id="tb-perfil"><span class="av" aria-hidden="true"></span><span id="tb-perfil-txt">Entrar</span></a>
+</div>
 <script>
 (function(){
   /* CONFIGURAÇÃO: troque os 3 valores abaixo antes de publicar */
@@ -392,9 +503,9 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
-    document.querySelectorAll("nav a").forEach(function(a){
+    document.querySelectorAll("[data-v]").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
     });
     window.scrollTo(0,0);
@@ -403,7 +514,9 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(v==="minha-area")renderMinhaArea();
     if(v==="parceiros"){renderParceiros();atualizaConta()}
     if(v==="sobre")renderSobre();
-    if(v==="historias")renderHistorias();
+    if(v==="historias"){renderHistorias();marcaVisto("hist");$("n-hist").classList.remove("novo")}
+    if(v==="eventos"){marcaVisto("eventos");$("n-eventos").classList.remove("novo")}
+    if(v==="saude")renderSaude();
     if(v==="inicio"||v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
   window.addEventListener("hashchange",route);
@@ -540,10 +653,10 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("f-soc").hidden=!u||!cad;$("gate-soc").hidden=!!u;$("gate-soc2").hidden=!(u&&!cad);$("f-par").hidden=!u;$("gate-par").hidden=!!u;
     var c=$("conta");c.textContent="";
     if(u){
-      c.appendChild(document.createTextNode("Conectado: "+u.email+" "));
+      c.appendChild(document.createTextNode("Conectado: "+((estado&&estado.nome)||u.email)+" "));
       c.appendChild(btn("Sair",async function(){await db.auth.signOut();location.hash="#inicio";atualizaConta()}));
     }
-    renderInicio(u);
+    renderInicio(u);checaNovidades();atualizaChrome(u);
   }
   function renderInicio(u){
     var b=$("cta-inicio");b.textContent="";
@@ -584,7 +697,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   function titulo(t){var e=h("h2",0,t);e.style.marginTop="0";return e}
   function link(t,href,c){var e=h("a","btn "+(c||""),t);e.href=href;return e}
   async function renderMinhaArea(){
-    var box=$("min-box"),msg=$("min-msg");box.hidden=true;msg.textContent="";
+    var box=$("min-box"),msg=$("min-msg");box.hidden=true;msg.textContent="";$("perfil-topo").hidden=true;
     var u=await usuario();
     if(!u){msg.textContent="Entre na sua conta para ver sua área.";return}
     var r=await db.rpc("meu_painel");
@@ -592,7 +705,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     var d=r.data||{},sit=d.situacao,ativo=(sit==="ativo"||sit==="tolerancia");
     var ct=$("c-cart"),cad=$("c-cad"),so=$("c-socio"),be=$("c-ben");
     ct.textContent="";cad.textContent="";so.textContent="";be.textContent="";
-    msg.textContent=d.nome?"Olá, "+d.nome.split(" ")[0]+"!":"Bem-vindo(a)! Falta completar seu cadastro.";
+    $("pf-nome").textContent=d.nome||u.email;$("perfil-topo").hidden=false;msg.textContent=d.nome?"":"Falta completar seu cadastro.";
     var hoje=new Date();hoje.setHours(0,0,0,0);
     var dias=d.pago_ate?Math.round((new Date(d.pago_ate+"T00:00:00")-hoje)/864e5):null;
     if(ativo&&d.tem_cadastro){
@@ -622,6 +735,9 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     }else{
       so.appendChild(h("p",0,"Contribua com R$ 30,00 por mês via Pix e tenha acesso aos benefícios abaixo."));so.appendChild(link("Quero ser sócio","#socio","red"));
     }
+    var sa=$("c-saude");sa.textContent="";sa.appendChild(titulo("Consultas e exames"));
+    if(ativo){sa.appendChild(h("p",0,"Peça uma consulta, dentista ou exame. A CAPEDAC marca e avisa você."));sa.appendChild(link("Pedir consulta ou exame","#saude"))}
+    else sa.appendChild(h("p","small","Benefício exclusivo para sócios com a mensalidade em dia."));
     be.appendChild(titulo(ativo?"Seus benefícios":"Benefícios para sócios"));
     var b=d.beneficios||[];
     if(!b.length)be.appendChild(h("p","lead","A diretoria ainda vai publicar os benefícios."));
@@ -694,19 +810,88 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     $("ok-sobre").textContent=r.error?FALHA:"Texto salvo.";
   });
 
-  /* acessibilidade: tamanho da letra e alto contraste */
-  var ac={fs:1,alto:false};
-  try{ac=JSON.parse(localStorage.getItem("capedac_ac"))||ac}catch(e){}
+  /* aparência: tema claro/escuro/alto contraste e tamanho da letra (menu lateral) */
+  var ac={fs:1,tema:null};
+  try{var sv=JSON.parse(localStorage.getItem("capedac_ac"));if(sv){ac.fs=sv.fs||1;ac.tema=sv.tema||(sv.alto?"alto":null)}}catch(e){}
   function aplicaAc(){
-    document.documentElement.style.setProperty("--fs",ac.fs);
-    document.documentElement.setAttribute("data-contraste",ac.alto?"alto":"normal");
-    $("ac-alto").setAttribute("aria-pressed",String(!!ac.alto));
+    var r=document.documentElement;
+    r.style.setProperty("--fs",ac.fs);
+    r.setAttribute("data-contraste",ac.tema==="alto"?"alto":"normal");
+    if(ac.tema==="claro")r.setAttribute("data-theme","light");else if(ac.tema==="escuro")r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");
+    document.querySelectorAll("[data-tema]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.tema===ac.tema))});
     try{localStorage.setItem("capedac_ac",JSON.stringify(ac))}catch(e){}
   }
+  document.querySelectorAll("[data-tema]").forEach(function(b){b.addEventListener("click",function(){ac.tema=b.dataset.tema;aplicaAc()})});
   $("ac-menos").addEventListener("click",function(){ac.fs=Math.max(0.9,+(ac.fs-0.15).toFixed(2));aplicaAc()});
   $("ac-mais").addEventListener("click",function(){ac.fs=Math.min(1.6,+(ac.fs+0.15).toFixed(2));aplicaAc()});
-  $("ac-alto").addEventListener("click",function(){ac.alto=!ac.alto;aplicaAc()});
   aplicaAc();
+
+  /* menu lateral */
+  function abreDrawer(sim){
+    $("drawer").classList.toggle("aberto",sim);$("drawer-fundo").hidden=!sim;
+    $("tb-menu").setAttribute("aria-expanded",String(sim));
+    if(sim)$("dr-fechar").focus();
+  }
+  $("tb-menu").addEventListener("click",function(){abreDrawer(true)});
+  $("dr-fechar").addEventListener("click",function(){abreDrawer(false)});
+  $("drawer-fundo").addEventListener("click",function(){abreDrawer(false)});
+  $("drawer").addEventListener("click",function(e){if(e.target.closest("a"))abreDrawer(false)});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("aberto")){abreDrawer(false);$("tb-menu").focus()}});
+  $("dr-sair").addEventListener("click",async function(){await db.auth.signOut();abreDrawer(false);location.hash="#inicio";atualizaConta()});
+
+  /* foto de perfil */
+  var AV={url:null,t:0,ini:"👤"};
+  function aplicaAvatar(){
+    document.querySelectorAll(".av").forEach(function(e){
+      e.style.backgroundImage=AV.url?'url("'+AV.url+'")':"";
+      e.textContent=AV.url?"":AV.ini;
+    });
+  }
+  async function carregaAvatar(u,forca){
+    if(!u){AV.url=null;AV.t=0;AV.ini="👤";aplicaAvatar();return}
+    var nome=((estado&&estado.nome)||u.email||"?").trim();AV.ini=nome.charAt(0).toUpperCase();
+    if(forca||Date.now()-AV.t>3000000){
+      var sg=await db.storage.from("avatares").createSignedUrl(u.id+"/avatar.jpg",3600);
+      AV.url=(sg.data&&sg.data.signedUrl)||null;AV.t=Date.now();
+    }
+    aplicaAvatar();
+  }
+  function atualizaChrome(u){
+    var tp=$("tb-perfil"),hp=$("hd-perfil");
+    $("dr-nome").textContent=u?((estado&&estado.nome)||u.email):"Visitante";
+    $("dr-sair").hidden=!u;
+    tp.href=hp.href=u?"#minha-area":"#entrar";
+    tp.dataset.v=u?"minha-area":"entrar";
+    $("tb-perfil-txt").textContent=u?"Perfil":"Entrar";
+    carregaAvatar(u);
+  }
+  function recortaFoto(file,lado){
+    return new Promise(function(ok,fail){
+      var img=new Image(),url=URL.createObjectURL(file);
+      img.onload=function(){
+        var m=Math.min(img.width,img.height),cv=document.createElement("canvas");
+        cv.width=cv.height=lado;
+        cv.getContext("2d").drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,lado,lado);
+        URL.revokeObjectURL(url);
+        cv.toBlob(function(b){b?ok(b):fail()},"image/jpeg",0.85);
+      };
+      img.onerror=function(){URL.revokeObjectURL(url);fail()};
+      img.src=url;
+    });
+  }
+  $("pf-trocar").addEventListener("click",function(){$("pf-file").click()});
+  $("pf-file").addEventListener("change",async function(){
+    var f=this.files[0],inp=this;if(!f)return;
+    var u=await usuario();if(!u)return;
+    $("pf-msg").textContent="Enviando a foto...";
+    try{
+      var b=await recortaFoto(f,320);
+      var up=await db.storage.from("avatares").upload(u.id+"/avatar.jpg",b,{contentType:"image/jpeg",upsert:true});
+      if(up.error)throw up.error;
+      await carregaAvatar(u,true);$("pf-msg").textContent="Foto atualizada.";
+    }catch(x){$("pf-msg").textContent="Não foi possível enviar a foto. Tente outra imagem."}
+    inp.value="";
+  });
 
   /* exportar listas (CSV) */
   function baixarCsv(nome,cab,linhas){
@@ -782,7 +967,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     }
     var r=editHist?await db.from("historias").update(dados).eq("id",editHist):await db.from("historias").insert(dados);
     if(r.error){erro("e-hist",FALHA);$("ok-hist").textContent="";return}
-    erro("e-hist","");limpaHist();$("ok-hist").textContent="Entrevista salva.";renderAdmin();
+    erro("e-hist","");limpaHist();avisoZap($("ok-hist"),"Entrevista salva.","Nova entrevista na CAPEDAC: "+t+". Veja em https://caped-ac.github.io (precisa estar cadastrado).");renderAdmin();
   });
 
   /* redes sociais da CAPEDAC */
@@ -815,6 +1000,87 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     var r=await db.from("sobre").upsert({id:"redes",conteudo:JSON.stringify(d),atualizado_em:new Date().toISOString()});
     $("ok-redes").textContent=r.error?FALHA:"Redes salvas.";renderRedes();
   });
+
+  /* consultas e exames (sócio em dia) */
+  async function renderSaude(){
+    var msg=$("saude-msg"),box=$("lista-saude"),f=$("f-saude");msg.textContent="";box.textContent="";f.hidden=true;
+    var u=await usuario();
+    if(!u){msg.textContent="Entre na sua conta para usar este recurso.";return}
+    var pc=await db.rpc("meu_painel"),d=pc.data||{};
+    if(!d.tem_cadastro){msg.textContent="Complete seu cadastro primeiro.";box.appendChild(link("Completar meu cadastro","#cadastro"));return}
+    if(d.situacao!=="ativo"&&d.situacao!=="tolerancia"){msg.textContent="Este benefício é para sócios com a mensalidade em dia.";box.appendChild(link("Quero ser sócio","#socio","red"));return}
+    f.hidden=false;
+    var r=await db.from("pedidos_saude").select("*").order("criado_em",{ascending:false});
+    if(r.error){box.appendChild(h("p","lead",FALHA));return}
+    var l=r.data||[];
+    if(!l.length){box.appendChild(h("p","small","Você ainda não fez nenhum pedido."));return}
+    l.forEach(function(p){
+      var c=h("div","card");
+      c.appendChild(h("h3",0,p.tipo));
+      c.appendChild(h("p",0,p.descricao));
+      var st=p.status==="marcado"?"Marcado para "+dBR(p.data_marcada)+(p.local_marcado?" – "+p.local_marcado:""):p.status==="cancelado"?"Não foi possível marcar"+(p.local_marcado?": "+p.local_marcado:""):"Aguardando a CAPEDAC marcar";
+      c.appendChild(h("p",p.status==="marcado"?"ok":"small",st));
+      if(p.status==="pendente")c.appendChild(btn("Cancelar pedido",async function(){
+        if(!confirm("Cancelar este pedido e apagar a foto?"))return;
+        if(p.foto_path)await db.storage.from("exames").remove([p.foto_path]);
+        await db.from("pedidos_saude").delete().eq("id",p.id);renderSaude()}));
+      box.appendChild(c);
+    });
+  }
+  function comprimir(file){
+    return new Promise(function(ok,fail){
+      var img=new Image(),url=URL.createObjectURL(file);
+      img.onload=function(){
+        var k=Math.min(1,1600/Math.max(img.width,img.height)),cv=document.createElement("canvas");
+        cv.width=Math.round(img.width*k);cv.height=Math.round(img.height*k);
+        cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
+        URL.revokeObjectURL(url);
+        cv.toBlob(function(b){b?ok(b):fail()},"image/jpeg",0.8);
+      };
+      img.onerror=function(){URL.revokeObjectURL(url);fail()};
+      img.src=url;
+    });
+  }
+  $("f-saude").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var desc=$("s-desc").value.trim(),ff=$("s-foto").files[0];
+    if(desc.length<5){erro("e-saude","Descreva o que você precisa.");return}
+    if(!$("s-ok").checked){erro("e-saude","Marque a autorização para enviar o pedido.");return}
+    var u=await usuario();if(!u){erro("e-saude","Entre na sua conta.");return}
+    var bs=$("s-enviar"),path=null;bs.disabled=true;erro("e-saude","");$("ok-saude").textContent="Enviando...";
+    if(ff){
+      var blob;
+      try{blob=await comprimir(ff)}catch(x){bs.disabled=false;$("ok-saude").textContent="";erro("e-saude","Não foi possível ler a foto. Tente outra.");return}
+      path=u.id+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+".jpg";
+      var up=await db.storage.from("exames").upload(path,blob,{contentType:"image/jpeg"});
+      if(up.error){bs.disabled=false;$("ok-saude").textContent="";erro("e-saude","Não foi possível enviar a foto.");return}
+    }
+    var r=await db.from("pedidos_saude").insert({user_id:u.id,tipo:$("s-tipo").value,descricao:desc,foto_path:path,consentimento:true});
+    bs.disabled=false;
+    if(r.error){if(path)await db.storage.from("exames").remove([path]);$("ok-saude").textContent="";erro("e-saude",FALHA);return}
+    $("f-saude").reset();$("ok-saude").textContent="Pedido enviado. A CAPEDAC vai marcar e avisar aqui.";renderSaude();
+  });
+
+  /* novidades (bolinha no menu) e aviso pelo WhatsApp */
+  function visto(k){try{return localStorage.getItem("capedac_visto_"+k)||""}catch(e){return ""}}
+  function marcaVisto(k){try{localStorage.setItem("capedac_visto_"+k,new Date().toISOString())}catch(e){}}
+  async function checaNovidades(){
+    var u=await usuario();
+    $("n-eventos").classList.remove("novo");$("n-hist").classList.remove("novo");
+    if(!u||!db)return;
+    var alvo=[["eventos","eventos","n-eventos"],["historias","hist","n-hist"]];
+    for(var i=0;i<alvo.length;i++){
+      var a=alvo[i],r=await db.from(a[0]).select("criado_em").order("criado_em",{ascending:false}).limit(1);
+      var nv=r.data&&r.data[0]&&r.data[0].criado_em,v=visto(a[1]);
+      if(!v){marcaVisto(a[1]);continue}
+      if(nv&&new Date(nv)>new Date(v))$(a[2]).classList.add("novo");
+    }
+  }
+  function avisoZap(el,msg,texto){
+    el.textContent=msg+" ";
+    var a=h("a",0,"Avisar no WhatsApp");a.href="https://wa.me/?text="+encodeURIComponent(texto);a.target="_blank";a.rel="noopener noreferrer";
+    el.appendChild(a);
+  }
 
   /* painel da diretoria */
   async function checaAdmin(){
@@ -862,6 +1128,37 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     r=await db.from("sobre").select("conteudo").eq("id","redes").maybeSingle();
     var rd={};try{rd=JSON.parse((r.data&&r.data.conteudo)||"{}")}catch(e){}
     REDES.forEach(function(n){$("r-"+n[0]).value=rd[n[0]]||""});
+    var ps2=await db.from("pedidos_saude").select("*").order("criado_em",{ascending:false});
+    var mem=await db.from("membros").select("user_id,nome,telefone"),mapa={};
+    (mem.data||[]).forEach(function(m){mapa[m.user_id]=m});
+    var sx2=$("a-saude");sx2.textContent="";
+    var lp=ps2.data||[];
+    if(!lp.length)sx2.appendChild(h("p","small","Nenhum pedido de consulta ou exame."));
+    lp.forEach(function(p){
+      var m=mapa[p.user_id]||{},c=h("div","card");
+      c.appendChild(h("strong",0,(m.nome||"Sócio")+" – "+p.tipo+" ("+p.status+")"));
+      c.appendChild(h("p","small","Telefone: "+(m.telefone||"não informado")));
+      c.appendChild(h("p",0,p.descricao));
+      if(p.foto_path){
+        var bf=btn("Ver foto do exame",async function(){
+          var sg=await db.storage.from("exames").createSignedUrl(p.foto_path,300);
+          if(sg.data&&sg.data.signedUrl){var im=h("img");im.src=sg.data.signedUrl;im.alt="Foto do exame";im.style.cssText="max-width:100%;border-radius:8px;margin-top:8px";c.appendChild(im);bf.hidden=true}
+        });
+        c.appendChild(bf);
+      }
+      if(p.status==="pendente"){
+        var dt=h("input");dt.type="date";dt.setAttribute("aria-label","Data marcada");dt.style.marginTop="8px";
+        var lc=h("input");lc.placeholder="Local e observações (ex.: Clínica X, levar documento)";lc.maxLength=200;lc.setAttribute("aria-label","Local e observações");lc.style.marginTop="8px";
+        var row=h("div","row");row.style.marginTop="8px";
+        row.appendChild(btn("Confirmar marcado",async function(){
+          if(!dt.value){alert("Escolha a data marcada.");return}
+          await db.from("pedidos_saude").update({status:"marcado",data_marcada:dt.value,local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()},"red"));
+        row.appendChild(btn("Não consegui marcar",async function(){
+          await db.from("pedidos_saude").update({status:"cancelado",local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()}));
+        c.appendChild(dt);c.appendChild(lc);c.appendChild(row);
+      }else if(p.status==="marcado")c.appendChild(h("p","ok","Marcado para "+dBR(p.data_marcada)+(p.local_marcado?" – "+p.local_marcado:"")));
+      sx2.appendChild(c);
+    });
     r=await db.from("historias").select("*").order("criado_em",{ascending:false});
     var hx=$("a-hists");hx.textContent="";
     (r.data||[]).forEach(function(hs){
@@ -898,7 +1195,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     if(!$("ev-titulo").value.trim()||!$("ev-data").value){erro("e-ev","Preencha o título e a data.");return}
     var r=await db.from("eventos").insert({titulo:$("ev-titulo").value.trim(),data:$("ev-data").value,hora:$("ev-hora").value||null,local:$("ev-local").value.trim()||null,descricao:$("ev-desc").value.trim()||null});
     if(r.error){erro("e-ev",FALHA);return}
-    erro("e-ev","");$("f-ev").reset();$("ok-ev").textContent="Evento publicado.";renderAdmin();
+    var tt=$("ev-titulo").value.trim(),dd=$("ev-data").value;erro("e-ev","");$("f-ev").reset();avisoZap($("ok-ev"),"Evento publicado.","Novo evento da CAPEDAC: "+tt+" ("+dBR(dd)+"). Veja os detalhes e confirme sua presença em https://caped-ac.github.io");renderAdmin();
   });
   $("a-salvar-ben").addEventListener("click",async function(){
     var linhas=$("a-ben").value.split("\n").map(function(x){return x.trim()}).filter(Boolean);
