@@ -103,6 +103,7 @@ html[data-contraste="alto"]:root{color-scheme:dark}
 .sino svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sino .badge{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--red);color:#fff;font-size:.78rem;font-weight:700;display:grid;place-items:center}
 .btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-right:10px;flex:none}
+a.card{display:block;color:inherit;text-decoration:none}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -148,7 +149,6 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <button type="button" class="btn alt mini" id="ac-menos" aria-label="Diminuir o tamanho das letras">A−</button>
     <button type="button" class="btn alt mini" id="ac-mais" aria-label="Aumentar o tamanho das letras">A+</button>
   </div>
-  <button type="button" class="btn alt mini" id="dr-sair" hidden style="margin:20px 4px 0">Sair da conta</button>
 </aside>
 
 <main id="conteudo">
@@ -164,7 +164,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
 <section class="view" id="v-cadastro" aria-labelledby="t-cad">
   <h1 id="t-cad">Cadastro de associado</h1>
   <p class="lead">Campos com * são obrigatórios.</p>
-  <p class="ok" id="cad-nota" hidden>Seu cadastro já está completo. Se preencher de novo, seus dados serão atualizados.</p>
+  <p class="ok" id="cad-nota" hidden>Seus dados estão preenchidos abaixo. Altere o que precisar e toque em Salvar alterações.</p>
   <div id="gate-cad" class="card" hidden><p>Para fazer seu cadastro, primeiro entre ou crie sua conta.</p><div class="cta"><a class="btn" href="#entrar">Entrar ou criar conta</a></div></div>
   <form id="f-cad" class="card" novalidate>
     <label for="nome">Nome completo *</label>
@@ -200,7 +200,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     </label>
     <p class="err" id="e-lgpd" role="alert"></p>
 
-    <div class="cta"><button class="btn" type="submit">Salvar cadastro</button></div>
+    <div class="cta"><button class="btn" id="cad-salvar" type="submit">Salvar cadastro</button></div>
     <p id="ok-cad" class="ok" role="status"></p>
   </form>
 </section>
@@ -385,6 +385,7 @@ Parceiros: os dados da proposta que você enviar.</p>
 <section class="view" id="v-notificacoes" aria-labelledby="t-notif">
   <h1 id="t-notif">Notificações</h1>
   <p class="lead" id="notif-msg"></p>
+  <button class="btn alt" id="notif-limpar" type="button" hidden style="margin:0 0 16px">Limpar notificações</button>
   <div id="lista-notif"></div>
 </section>
 
@@ -412,6 +413,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     <div class="card" id="c-socio"></div>
     <div class="card" id="c-saude"></div>
     <div class="card" id="c-ben"></div>
+    <div class="cta"><button class="btn alt" id="pf-sair" type="button">Sair da conta</button></div>
   </div>
 </section>
 
@@ -488,7 +490,7 @@ Parceiros: os dados da proposta que você enviar.</p>
 </section>
 
 </main>
-<footer><p id="conta" class="small"></p><p class="small"><a href="#privacidade">Política de privacidade</a></p><a href="#admin">Acesso da diretoria</a></footer>
+<footer><p class="small"><a href="#privacidade">Política de privacidade</a></p><a href="#admin">Acesso da diretoria</a></footer>
 <div class="tabbar" role="navigation" aria-label="Principal">
   <button type="button" class="tab" id="tb-menu" aria-controls="drawer" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Menu</span></button>
   <a href="#eventos" class="tab" data-v="eventos" id="n-eventos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Eventos</span></a>
@@ -536,6 +538,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(v==="eventos"){marcaVisto("eventos");$("n-eventos").classList.remove("novo")}
     if(v==="saude")renderSaude();
     if(v==="notificacoes")renderNotificacoes();
+    if(v==="cadastro")preencheCadastro();
     if(v==="inicio"||v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
   window.addEventListener("hashchange",route);
@@ -568,7 +571,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     var u=await usuario();if(!u){erro("e-lgpd","Entre na sua conta para salvar o cadastro.");return}
     var r=await db.from("membros").upsert({user_id:u.id,nome:$("nome").value.trim(),cpf:dig($("cpf").value),nascimento:$("nasc").value,telefone:dig($("tel").value),cidade:$("cidade").value.trim(),tipo_deficiencia:$("tipo").value||null,consentimento:true},{onConflict:"user_id"});
     if(r.error){erro("e-lgpd",FALHA);console.error(r.error);return}
-    $("ok-cad").textContent="Cadastro enviado para a CAPEDAC. Obrigado!";
+    $("ok-cad").textContent=(estado&&estado.tem_cadastro)?"Dados atualizados.":"Cadastro enviado para a CAPEDAC. Obrigado!";
     setTimeout(function(){location.hash="#minha-area"},1500);
     $("f-cad").reset();$("cidade").value="Rio Branco";
   });
@@ -670,11 +673,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     $("n-entrar").hidden=!!u;$("n-minha").hidden=!u;$("n-hist").hidden=!u;
     $("f-cad").hidden=!u;$("gate-cad").hidden=!!u;$("cad-nota").hidden=!cad;
     $("f-soc").hidden=!u||!cad;$("c-cupom").hidden=!u||!cad;$("gate-soc").hidden=!!u;$("gate-soc2").hidden=!(u&&!cad);$("f-par").hidden=!u;$("gate-par").hidden=!!u;
-    var c=$("conta");c.textContent="";
-    if(u){
-      c.appendChild(document.createTextNode("Conectado: "+((estado&&estado.nome)?primeiro(estado.nome):u.email)+" "));
-      c.appendChild(btn("Sair",async function(){await db.auth.signOut();location.hash="#inicio";atualizaConta()}));
-    }
     renderInicio(u);checaNovidades();atualizaChrome(u);
   }
   function renderInicio(u){
@@ -736,7 +734,7 @@ Parceiros: os dados da proposta que você enviar.</p>
       ct.appendChild(h("p","small","Dica: tire um print da tela para guardar sua carteirinha."));
     }
     cad.appendChild(titulo("Meu cadastro"));
-    if(d.tem_cadastro)cad.appendChild(h("p","ok","Cadastro completo."));
+    if(d.tem_cadastro){cad.appendChild(h("p","ok","Cadastro completo."));cad.appendChild(link("Alterar meus dados","#cadastro","alt"))}
     else{cad.appendChild(h("p",0,"Você ainda não preencheu seus dados."));cad.appendChild(link("Completar meu cadastro","#cadastro"))}
     so.appendChild(titulo("Sócio da CAPEDAC"));
     if(sit==="ativo"){
@@ -859,7 +857,6 @@ Parceiros: os dados da proposta que você enviar.</p>
   $("drawer-fundo").addEventListener("click",function(){abreDrawer(false)});
   $("drawer").addEventListener("click",function(e){if(e.target.closest("a"))abreDrawer(false)});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("aberto")){abreDrawer(false);$("tb-menu").focus()}});
-  $("dr-sair").addEventListener("click",async function(){await db.auth.signOut();abreDrawer(false);location.hash="#inicio";atualizaConta()});
 
   /* foto de perfil */
   var AV={url:null,t:0,ini:"👤"};
@@ -881,7 +878,6 @@ Parceiros: os dados da proposta que você enviar.</p>
   function atualizaChrome(u){
     var tp=$("tb-perfil"),hp=$("hd-perfil");
     $("dr-nome").textContent=u?((estado&&estado.nome)?primeiro(estado.nome):u.email):"Visitante";
-    $("dr-sair").hidden=!u;
     tp.href=hp.href=u?"#minha-area":"#entrar";
     tp.dataset.v=u?"minha-area":"entrar";
     $("tb-perfil-txt").textContent=u?"Perfil":"Entrar";
@@ -1119,41 +1115,76 @@ Parceiros: os dados da proposta que você enviar.</p>
   });
 
   /* caixinha de notificações */
-  async function dataVista(u){
-    var r=await db.from("notif_vistas").select("visto_ate").eq("user_id",u.id).maybeSingle();
-    return (r.data&&r.data.visto_ate)||u.created_at||new Date(0).toISOString();
+  var alvoScroll=null;
+  async function estadoNotif(u){
+    var r=await db.from("notif_vistas").select("*").eq("user_id",u.id).maybeSingle(),d=r.data||{};
+    return {visto:d.visto_ate||u.created_at||new Date(0).toISOString(),limpo:d.limpou_ate||new Date(0).toISOString()};
   }
   async function checaNotif(){
     var u=await usuario(),sino=$("hd-sino"),nb=$("sino-n");
     sino.hidden=!u;$("n-notif").hidden=!u;
     if(!u||!db){nb.hidden=true;return}
-    var v=await dataVista(u);
-    var r=await db.from("notificacoes").select("id",{count:"exact",head:true}).gt("criado_em",v);
+    var st=await estadoNotif(u);
+    var r=await db.from("notificacoes").select("id",{count:"exact",head:true}).gt("criado_em",st.visto);
     var n=r.count||0;nb.hidden=n<1;nb.textContent=n>9?"9+":String(n);
     sino.setAttribute("aria-label","Notificações"+(n?" ("+n+" novas)":""));
   }
+  function alvoDe(n){
+    var t=(n.titulo||"").toLowerCase();
+    return t.indexOf("pedido")>=0?"a-saude":t.indexOf("parceria")>=0?"a-pars":t.indexOf("pagamento")>=0?"a-socios":t.indexOf("cadastro")>=0?"a-cads":null;
+  }
   async function renderNotificacoes(){
-    var box=$("lista-notif"),msg=$("notif-msg");box.textContent="";msg.textContent="";
+    var box=$("lista-notif"),msg=$("notif-msg"),lp=$("notif-limpar");box.textContent="";msg.textContent="";lp.hidden=true;
     var u=await usuario();
     if(!u){msg.textContent="Entre na sua conta para ver as notificações.";return}
-    var v=await dataVista(u);
-    var r=await db.from("notificacoes").select("*").order("criado_em",{ascending:false}).limit(50);
+    var st=await estadoNotif(u);
+    var r=await db.from("notificacoes").select("*").gt("criado_em",st.limpo).order("criado_em",{ascending:false}).limit(50);
     if(r.error){msg.textContent=FALHA;return}
     var l=r.data||[];
     if(!l.length){msg.textContent="Nenhuma notificação por enquanto.";return}
+    lp.hidden=false;
     l.forEach(function(n){
-      var nova=new Date(n.criado_em)>new Date(v),c=h("div","card"+(nova?" ev":""));
+      var nova=new Date(n.criado_em)>new Date(st.visto),ok=!!n.link&&/^#[a-z-]+$/.test(n.link);
+      var c=h(ok?"a":"div","card"+(nova?" ev":""));
+      if(ok){c.href=n.link;c.addEventListener("click",function(){alvoScroll=n.link==="#admin"?alvoDe(n):null})}
       c.appendChild(h("strong",0,n.titulo+(nova?" • nova":"")));
       if(n.texto)c.appendChild(h("p",0,n.texto));
       var q=new Date(n.criado_em);
-      c.appendChild(h("p","small",q.toLocaleDateString("pt-BR")+" às "+q.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})));
-      if(n.link&&/^#[a-z-]+$/.test(n.link))c.appendChild(link("Abrir",n.link,"alt"));
+      c.appendChild(h("p","small",q.toLocaleDateString("pt-BR")+" às "+q.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+(ok?" · toque para abrir ›":"")));
       box.appendChild(c);
     });
     await db.from("notif_vistas").upsert({user_id:u.id,visto_ate:new Date().toISOString()});
     checaNotif();
   }
+  $("notif-limpar").addEventListener("click",async function(){
+    var u=await usuario();if(!u)return;
+    if(!confirm("Limpar todas as notificações?"))return;
+    var agora=new Date().toISOString();
+    var r=await db.from("notif_vistas").upsert({user_id:u.id,visto_ate:agora,limpou_ate:agora});
+    if(r.error){alert(FALHA);return}
+    renderNotificacoes();checaNotif();
+  });
+  $("pf-sair").addEventListener("click",async function(){
+    await db.auth.signOut();$("f-cad").reset();$("cidade").value="Rio Branco";
+    location.hash="#inicio";atualizaConta();
+  });
   setInterval(function(){if(!document.hidden)checaNotif()},60000);
+
+  /* alterar meus dados (preenche o cadastro com o que já está salvo) */
+  async function preencheCadastro(){
+    $("f-cad").reset();$("cidade").value="Rio Branco";$("cad-salvar").textContent="Salvar cadastro";$("ok-cad").textContent="";
+    var u=await usuario();if(!u||!db)return;
+    var r=await db.from("membros").select("*").eq("user_id",u.id).maybeSingle(),m=r.data;
+    if(!m)return;
+    $("nome").value=m.nome||"";
+    $("cpf").value=m.cpf||"";$("cpf").dispatchEvent(new Event("input"));
+    $("nasc").value=m.nascimento||"";
+    $("tel").value=m.telefone||"";
+    $("cidade").value=m.cidade||"";
+    $("tipo").value=m.tipo_deficiencia||"";
+    $("lgpd").checked=true;
+    $("cad-salvar").textContent="Salvar alterações";
+  }
 
   /* painel da diretoria */
   async function checaAdmin(){
@@ -1251,6 +1282,7 @@ Parceiros: os dados da proposta que você enviar.</p>
       row.appendChild(btn("Remover",async function(){await db.from("parceiros").delete().eq("id",p.id);renderAdmin()}));
       c.appendChild(row);px.appendChild(c);
     });
+    if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el)el.scrollIntoView({behavior:"smooth"})}
   }
   $("a-entrar").addEventListener("click",async function(){
     if(!db){erro("e-adm",OFF);return}
