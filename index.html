@@ -261,6 +261,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <p class="err" id="e-ent" role="alert"></p>
     <div class="cta"><button class="btn red" id="l-ok" type="submit">Entrar</button></div>
   </form>
+  <p><a href="#esqueci">Esqueci minha senha</a></p>
 </section>
 
 <section class="view" id="v-parceiros" aria-labelledby="t-par">
@@ -389,6 +390,21 @@ Parceiros: os dados da proposta que você enviar.</p>
   <div id="lista-notif"></div>
 </section>
 
+<section class="view" id="v-esqueci" aria-labelledby="t-esq">
+  <h1 id="t-esq">Esqueci minha senha</h1>
+  <p class="lead">Por segurança, a diretoria da CAPEDAC confere quem é você e passa uma senha temporária. Deixe seu nome e um contato.</p>
+  <form id="f-esqueci" class="card" novalidate>
+    <label for="eq-nome">Nome completo *</label>
+    <input id="eq-nome" maxlength="80" autocomplete="name">
+    <label for="eq-contato">Telefone (WhatsApp) ou e-mail para contato *</label>
+    <input id="eq-contato" maxlength="80">
+    <p class="small">Tenha à mão a data de nascimento e a cidade do seu cadastro. A diretoria vai pedir para confirmar.</p>
+    <p class="err" id="e-esq" role="alert"></p>
+    <div class="cta"><button class="btn red" type="submit">Enviar pedido de ajuda</button></div>
+    <p class="ok" id="ok-esq" role="status"></p>
+  </form>
+</section>
+
 <section class="view" id="v-eventos" aria-labelledby="t-ev">
   <h1 id="t-ev">Eventos e festas</h1>
   <div id="lista-ev"></div>
@@ -413,6 +429,20 @@ Parceiros: os dados da proposta que você enviar.</p>
     <div class="card" id="c-socio"></div>
     <div class="card" id="c-saude"></div>
     <div class="card" id="c-ben"></div>
+    <div class="card" id="c-senha">
+      <h2 style="margin-top:0">Alterar minha senha</h2>
+      <form id="f-senha" novalidate>
+        <label for="sn-atual">Senha atual</label>
+        <input id="sn-atual" type="password" autocomplete="current-password">
+        <label for="sn-nova">Nova senha <span class="hint">(mínimo de 8 caracteres)</span></label>
+        <input id="sn-nova" type="password" autocomplete="new-password">
+        <label for="sn-rep">Repita a nova senha</label>
+        <input id="sn-rep" type="password" autocomplete="new-password">
+        <p class="err" id="e-senha" role="alert"></p>
+        <div class="cta"><button class="btn alt" type="submit">Salvar nova senha</button></div>
+        <p class="ok" id="ok-senha" role="status"></p>
+      </form>
+    </div>
     <div class="cta"><button class="btn alt" id="pf-sair" type="button">Sair da conta</button></div>
   </div>
 </section>
@@ -446,6 +476,14 @@ Parceiros: os dados da proposta que você enviar.</p>
     </form>
     <h2>Eventos publicados</h2><div id="a-evs"></div>
     <h2>Pagamentos de sócios</h2><div id="a-socios"></div>
+    <h2>Redefinir senha de um membro</h2>
+    <div class="card">
+      <p class="small">Confira a identidade antes (cidade e data de nascimento do cadastro). A pessoa recebe um aviso de que a senha foi trocada.</p>
+      <label for="a-busca-senha" style="margin-top:0">Nome, telefone ou e-mail</label>
+      <input id="a-busca-senha" autocomplete="off">
+      <div class="cta"><button class="btn alt" id="a-busca-ok" type="button">Buscar</button></div>
+      <div id="a-reset" style="margin-top:12px"></div>
+    </div>
     <h2>Consultas e exames (pedidos)</h2><div id="a-saude"></div>
     <h2>Benefícios dos sócios</h2>
     <div class="card">
@@ -523,7 +561,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
     document.querySelectorAll("[data-v]").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
@@ -1131,7 +1169,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   }
   function alvoDe(n){
     var t=(n.titulo||"").toLowerCase();
-    return t.indexOf("pedido")>=0?"a-saude":t.indexOf("parceria")>=0?"a-pars":t.indexOf("pagamento")>=0?"a-socios":t.indexOf("cadastro")>=0?"a-cads":null;
+    return t.indexOf("senha")>=0?"a-reset":t.indexOf("pedido")>=0?"a-saude":t.indexOf("parceria")>=0?"a-pars":t.indexOf("pagamento")>=0?"a-socios":t.indexOf("cadastro")>=0?"a-cads":null;
   }
   async function renderNotificacoes(){
     var box=$("lista-notif"),msg=$("notif-msg"),lp=$("notif-limpar");box.textContent="";msg.textContent="";lp.hidden=true;
@@ -1185,6 +1223,55 @@ Parceiros: os dados da proposta que você enviar.</p>
     $("lgpd").checked=true;
     $("cad-salvar").textContent="Salvar alterações";
   }
+
+  /* senha: alterar (membro), pedir ajuda (visitante) e redefinir (admin) */
+  $("f-senha").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var at=$("sn-atual").value,nv=$("sn-nova").value,rp=$("sn-rep").value,u=await usuario();
+    $("ok-senha").textContent="";
+    if(!u){erro("e-senha","Entre na sua conta.");return}
+    if(nv.length<8){erro("e-senha","A nova senha precisa ter pelo menos 8 caracteres.");return}
+    if(nv!==rp){erro("e-senha","As senhas novas não são iguais.");return}
+    if(nv===at){erro("e-senha","A nova senha precisa ser diferente da atual.");return}
+    var v=await db.auth.signInWithPassword({email:u.email,password:at});
+    if(v.error){erro("e-senha","A senha atual está incorreta.");return}
+    var r=await db.auth.updateUser({password:nv});
+    if(r.error){erro("e-senha",FALHA);return}
+    erro("e-senha","");$("f-senha").reset();$("ok-senha").textContent="Senha alterada com sucesso.";
+  });
+  $("f-esqueci").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var n=$("eq-nome").value.trim(),c=$("eq-contato").value.trim();
+    $("ok-esq").textContent="";
+    if(n.split(/\s+/).length<2){erro("e-esq","Digite nome e sobrenome.");return}
+    if(c.length<5){erro("e-esq","Digite um telefone com DDD ou um e-mail.");return}
+    if(!db){erro("e-esq",OFF);return}
+    var r=await db.rpc("pedir_ajuda_senha",{p_nome:n,p_contato:c});
+    if(r.error){erro("e-esq",/muitos/.test(r.error.message||"")?"Muitos pedidos agora. Tente de novo mais tarde.":FALHA);return}
+    erro("e-esq","");$("f-esqueci").reset();$("ok-esq").textContent="Pedido enviado. A diretoria vai entrar em contato.";
+  });
+  $("a-busca-ok").addEventListener("click",async function(){
+    var q=$("a-busca-senha").value.trim(),box=$("a-reset");box.textContent="";
+    if(q.length<3){box.appendChild(h("p","small","Digite pelo menos 3 letras ou números."));return}
+    var r=await db.rpc("admin_buscar_membro",{p_busca:q});
+    if(r.error){box.appendChild(h("p","small",FALHA));return}
+    var l=r.data||[];
+    if(!l.length){box.appendChild(h("p","small","Ninguém encontrado."));return}
+    l.forEach(function(m){
+      var c=h("div","card");
+      c.appendChild(h("strong",0,m.nome));
+      c.appendChild(h("p","small","Telefone: "+m.telefone+" | Cidade: "+m.cidade+" | Nascimento: "+dBR(m.nascimento)));
+      c.appendChild(h("p","small","E-mail: "+m.email));
+      c.appendChild(btn("Definir senha temporária",async function(){
+        var s1=prompt("Senha temporária para "+m.nome+" (mínimo de 8 caracteres):");
+        if(!s1)return;
+        if(s1.length<8){alert("A senha precisa ter pelo menos 8 caracteres.");return}
+        var x=await db.rpc("admin_redefinir_senha",{p_email:m.email,p_senha:s1});
+        alert(x.error?"Não foi possível trocar a senha.":"Senha trocada. Passe a senha à pessoa e peça que a altere em Perfil > Alterar minha senha.");
+      },"red"));
+      box.appendChild(c);
+    });
+  });
 
   /* painel da diretoria */
   async function checaAdmin(){
