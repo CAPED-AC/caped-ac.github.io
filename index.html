@@ -105,6 +105,14 @@ html[data-contraste="alto"]:root{color-scheme:dark}
 .btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-right:10px;flex:none}
 a.card{display:block;color:inherit;text-decoration:none}
 .abas{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.tabbar-admin{display:none}
+.modo-admin .tabbar-membro{display:none}
+.modo-admin .tabbar-admin{display:flex}
+.hd-menu{display:none;width:46px;height:46px;border-radius:50%;border:2px solid var(--on-navy);background:var(--on-navy);color:var(--navy);place-items:center;cursor:pointer;padding:0}
+.hd-menu svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.modo-admin .hd-menu{display:grid}
+.tab[aria-pressed="true"]{color:var(--navy)}
+.tab .nb{position:absolute;top:2px;left:calc(50% + 6px);min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--red);color:#fff;font-size:.75rem;font-weight:700;display:grid;place-items:center}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -119,6 +127,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <img data-logo class="logo" alt="" width="52" height="52">
     <div><strong>CAPEDAC</strong><span>Centro de Apoio à Pessoa com Deficiência Física do Acre</span></div>
     <div class="hd-acoes">
+      <button type="button" class="hd-menu" id="hd-menu" aria-label="Abrir menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
       <a href="#notificacoes" class="sino" id="hd-sino" aria-label="Notificações" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" id="sino-n" hidden></span></a>
       <a href="#entrar" class="av hd-av" id="hd-perfil" aria-label="Meu perfil"></a>
     </div>
@@ -138,6 +147,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <a class="item" href="#notificacoes" data-v="notificacoes" id="n-notif" hidden>Notificações</a>
   <a class="item" href="#minha-area" data-v="minha-area" id="n-minha" hidden>Meu perfil</a>
   <a class="item" href="#senha" data-v="senha" id="n-senha" hidden>Alterar minha senha</a>
+  <a class="item" href="#admin" data-v="admin" id="n-admin" hidden>Painel da diretoria</a>
   <a class="item" href="#entrar" data-v="entrar" id="n-entrar">Entrar ou criar conta</a>
   <a class="item" href="#privacidade" data-v="privacidade">Política de privacidade</a>
   <h2>Aparência</h2>
@@ -215,6 +225,14 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   </div>
   <div id="gate-soc" class="card" hidden><p>Para ser sócio, primeiro entre ou crie sua conta.</p><div class="cta"><a class="btn" href="#entrar">Entrar ou criar conta</a></div></div>
   <div id="gate-soc2" class="card" hidden><p>Para ser sócio, complete primeiro o seu cadastro.</p><div class="cta"><a class="btn" href="#cadastro">Completar meu cadastro</a></div></div>
+  <div id="c-cupom" class="card" hidden>
+    <h2 style="margin-top:0">Tem um cupom?</h2>
+    <label for="cupom-cod">Código do cupom</label>
+    <input id="cupom-cod" autocomplete="off" autocapitalize="characters" maxlength="40">
+    <p class="err" id="e-cupom" role="alert"></p>
+    <div class="cta"><button class="btn alt" id="cupom-ok" type="button">Aplicar cupom</button></div>
+    <p class="ok" id="ok-cupom" role="status"></p>
+  </div>
   <form id="f-soc" class="card" novalidate>
     <label for="s-nome">Seu nome completo *</label>
     <input id="s-nome" autocomplete="name" required>
@@ -226,15 +244,8 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <p class="err" id="e-pix" role="alert"></p>
   </form>
 
-  <div id="c-cupom" class="card" hidden>
-    <h2 style="margin-top:0">Tem um cupom?</h2>
-    <label for="cupom-cod">Código do cupom</label>
-    <input id="cupom-cod" autocomplete="off" autocapitalize="characters" maxlength="40">
-    <p class="err" id="e-cupom" role="alert"></p>
-    <div class="cta"><button class="btn alt" id="cupom-ok" type="button">Aplicar cupom</button></div>
-  </div>
   <div id="pix" class="card" hidden aria-live="polite">
-    <h2 style="margin-top:0">Pague R$ 30,00 pelo Pix</h2>
+    <h2 style="margin-top:0" id="pix-titulo">Pague R$ 30,00 pelo Pix</h2>
     <p>Abra o app do seu banco, escolha <b>Pix</b> e leia o QR code.</p>
     <div id="qr" aria-label="QR code do Pix"></div>
     <p>Ou use o Pix copia e cola:</p>
@@ -394,7 +405,16 @@ Parceiros: os dados da proposta que você enviar.</p>
 
 <section class="view" id="v-esqueci" aria-labelledby="t-esq">
   <h1 id="t-esq">Esqueci minha senha</h1>
-  <p class="lead">Por segurança, a diretoria da CAPEDAC confere quem é você e passa uma senha temporária. Deixe seu nome e um contato.</p>
+  <p class="lead">Digite o e-mail da sua conta e enviaremos um link para criar uma nova senha.</p>
+  <form id="f-reset" class="card" novalidate>
+    <label for="rs-email" style="margin-top:0">E-mail da conta *</label>
+    <input id="rs-email" type="email" inputmode="email" autocomplete="username">
+    <p class="err" id="e-rs" role="alert"></p>
+    <div class="cta"><button class="btn red" type="submit">Enviar link para o meu e-mail</button></div>
+    <p class="ok" id="ok-rs" role="status"></p>
+  </form>
+  <h2>Não lembro nem o e-mail</h2>
+  <p class="lead">Nesse caso a diretoria da CAPEDAC confere quem é você e passa uma senha temporária. Deixe seu nome e um contato.</p>
   <form id="f-esqueci" class="card" novalidate>
     <label for="eq-nome">Nome completo *</label>
     <input id="eq-nome" maxlength="80" autocomplete="name">
@@ -420,6 +440,20 @@ Parceiros: os dados da proposta que você enviar.</p>
     <p class="err" id="e-senha" role="alert"></p>
     <div class="cta"><button class="btn red" type="submit">Salvar nova senha</button></div>
     <p class="ok" id="ok-senha" role="status"></p>
+  </form>
+</section>
+
+<section class="view" id="v-nova-senha" aria-labelledby="t-nv">
+  <h1 id="t-nv">Criar nova senha</h1>
+  <p class="lead">Escolha uma senha nova para a sua conta.</p>
+  <form id="f-nova" class="card" novalidate>
+    <label for="nv-nova" style="margin-top:0">Nova senha <span class="hint">(mínimo de 8 caracteres)</span></label>
+    <input id="nv-nova" type="password" autocomplete="new-password">
+    <label for="nv-rep">Repita a nova senha</label>
+    <input id="nv-rep" type="password" autocomplete="new-password">
+    <p class="err" id="e-nv" role="alert"></p>
+    <div class="cta"><button class="btn red" type="submit">Salvar nova senha</button></div>
+    <p class="ok" id="ok-nv" role="status"></p>
   </form>
 </section>
 
@@ -462,14 +496,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     <div class="cta"><button class="btn" id="a-entrar" type="button">Entrar</button></div>
   </div>
   <div id="a-painel" hidden>
-    <div class="abas" role="group" aria-label="Seções do painel">
-      <button type="button" class="btn alt mini" data-ir="pend" aria-pressed="true">Pendências<span id="ab-pend-n"></span></button>
-      <button type="button" class="btn alt mini" data-ir="ev" aria-pressed="false">Eventos</button>
-      <button type="button" class="btn alt mini" data-ir="ent" aria-pressed="false">Entrevistas</button>
-      <button type="button" class="btn alt mini" data-ir="pes" aria-pressed="false">Pessoas</button>
-      <button type="button" class="btn alt mini" data-ir="site" aria-pressed="false">Site</button>
-    </div>
-
     <div class="aba" data-aba="pend">
       <h2>Pagamentos de sócio para confirmar</h2><div id="a-socios"></div>
       <h2>Pedidos de consulta e exame</h2><div id="a-saude"></div>
@@ -537,8 +563,17 @@ Parceiros: os dados da proposta que você enviar.</p>
         <input id="cp-max" type="number" inputmode="numeric" min="1" value="1">
         <label for="cp-ate">Válido até <span class="hint">(opcional)</span></label>
         <input id="cp-ate" type="date">
-        <label for="cp-dias">Dias de sócio que o cupom dá <span class="hint">(vazio = sem vencimento)</span></label>
-        <input id="cp-dias" type="number" inputmode="numeric" min="1">
+        <label for="cp-tipo">O que o cupom dá</label>
+        <select id="cp-tipo"><option value="gratis">Sócio grátis</option><option value="desconto">Desconto em reais no pagamento</option></select>
+        <div id="cp-box-gratis">
+          <label for="cp-dias">Dias de sócio <span class="hint">(vazio = sem vencimento)</span></label>
+          <input id="cp-dias" type="number" inputmode="numeric" min="1">
+        </div>
+        <div id="cp-box-desc" hidden>
+          <label for="cp-desc">Desconto em reais <span class="hint">(de R$ 1 a R$ 29)</span></label>
+          <input id="cp-desc" type="number" inputmode="decimal" min="1" max="29" step="0.01">
+          <p class="small">O desconto vale para um pagamento de R$ 30,00 de cada pessoa que usar o cupom.</p>
+        </div>
         <p class="err" id="e-cp" role="alert"></p>
         <div class="cta"><button class="btn" type="submit">Criar cupom</button></div>
       </form>
@@ -575,12 +610,19 @@ Parceiros: os dados da proposta que você enviar.</p>
 
 </main>
 <footer><p class="small"><a href="#privacidade">Política de privacidade</a></p><a href="#admin">Acesso da diretoria</a></footer>
-<div class="tabbar" role="navigation" aria-label="Principal">
+<div class="tabbar tabbar-membro" role="navigation" aria-label="Principal">
   <button type="button" class="tab" id="tb-menu" aria-controls="drawer" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Menu</span></button>
   <a href="#eventos" class="tab" data-v="eventos" id="n-eventos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Eventos</span></a>
   <a href="#inicio" class="tab-fab" data-v="inicio" aria-label="Início"><img data-logo alt="" width="58" height="58"></a>
   <a href="#doar" class="tab" data-v="doar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg><span>Doar</span></a>
   <a href="#entrar" class="tab" data-v="entrar" id="tb-perfil"><span class="av" aria-hidden="true"></span><span id="tb-perfil-txt">Entrar</span></a>
+</div>
+<div class="tabbar tabbar-admin" role="navigation" aria-label="Painel da diretoria">
+  <button type="button" class="tab" data-ir="pend" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Pendências</span><span class="nb" id="ab-pend-n" hidden></span></button>
+  <button type="button" class="tab" data-ir="ev" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Eventos</span></button>
+  <button type="button" class="tab" data-ir="ent" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 7l-7 5 7 5V7zM3 5h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg><span>Entrevistas</span></button>
+  <button type="button" class="tab" data-ir="pes" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Pessoas</span></button>
+  <button type="button" class="tab" data-ir="site" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Site</span></button>
 </div>
 <script>
 (function(){
@@ -596,6 +638,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   var $=function(id){return document.getElementById(id)};
   var db=null;
   try{if(SUPABASE_URL.indexOf("http")===0)db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){}
+  if(db)db.auth.onAuthStateChange(function(ev){if(ev==="PASSWORD_RECOVERY")setTimeout(function(){location.hash="#nova-senha"},0)});
   var OFF="O site ainda não está conectado ao banco de dados.";
   var FALHA="Não foi possível concluir. Verifique a internet e tente de novo.";
   function erro(id,msg){$(id).textContent=msg||"";return !msg}
@@ -607,13 +650,14 @@ Parceiros: os dados da proposta que você enviar.</p>
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,senha:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,senha:1,"nova-senha":1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
     document.querySelectorAll("[data-v]").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
     });
     window.scrollTo(0,0);
     if(v==="eventos")renderEventos();
+    if(v!=="admin")document.body.classList.remove("modo-admin");
     if(v==="admin")renderAdmin();
     if(v==="minha-area")renderMinhaArea();
     if(v==="parceiros"){renderParceiros();atualizaConta()}
@@ -655,7 +699,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(!db){erro("e-lgpd",OFF);return}
     var u=await usuario();if(!u){erro("e-lgpd","Entre na sua conta para salvar o cadastro.");return}
     var r=await db.from("membros").upsert({user_id:u.id,nome:$("nome").value.trim(),cpf:dig($("cpf").value),nascimento:$("nasc").value,telefone:dig($("tel").value),cidade:$("cidade").value.trim(),tipo_deficiencia:$("tipo").value||null,consentimento:true},{onConflict:"user_id"});
-    if(r.error){erro("e-lgpd",FALHA);console.error(r.error);return}
+    if(r.error){erro("e-lgpd",/cpf|duplicate|unique/i.test((r.error.message||"")+(r.error.details||""))?"Este CPF já está cadastrado. Se você já tem conta, entre com ela ou use Esqueci minha senha.":FALHA);console.error(r.error);return}
     $("ok-cad").textContent=(estado&&estado.tem_cadastro)?"Dados atualizados.":"Cadastro enviado para a CAPEDAC. Obrigado!";
     setTimeout(function(){location.hash="#minha-area"},1500);
     $("f-cad").reset();$("cidade").value="Rio Branco";
@@ -682,7 +726,8 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(PIX_KEY.indexOf("COLE_AQUI")===0){erro("e-pix","A chave Pix da associação ainda não foi configurada no site.");ok=false}
     else erro("e-pix","");
     if(!ok)return;
-    var code=brcode(PIX_KEY);
+    var vlr=cupomAtual?cupomAtual.valor:Number(VALOR),code=brcode(PIX_KEY,vlr.toFixed(2));
+    $("pix-titulo").textContent="Pague R$ "+fmt(vlr)+" pelo Pix";
     atual={nome:$("s-nome").value.trim(),telefone:dig($("s-tel").value)};
     $("qr").innerHTML="";
     if(window.QRCode){new QRCode($("qr"),{text:code,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})}
@@ -701,9 +746,10 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(!atual)return;
     if(!db){$("ok-soc").textContent=OFF;return}
     var u=await usuario();if(!u){$("ok-soc").textContent="Entre na sua conta primeiro.";return}
-    var r=await db.from("socios").insert({user_id:u.id,nome:atual.nome,telefone:atual.telefone});
+    var r=await db.rpc("avisar_pagamento",{p_nome:atual.nome,p_telefone:atual.telefone,p_cupom:cupomAtual?cupomAtual.codigo:null});
     if(!r.error){$("b-pago").disabled=true;setTimeout(function(){location.hash="#minha-area"},2500)}
-    $("ok-soc").textContent=r.error?FALHA:"Recebemos seu aviso. A CAPEDAC vai confirmar o pagamento e entrar em contato.";
+    $("ok-soc").textContent=r.error?(/invalido/.test(r.error.message||"")?"Esse cupom não vale mais. Aplique outro ou pague o valor cheio.":/ja_usou/.test(r.error.message||"")?"Você já usou esse cupom.":FALHA):"Recebemos seu aviso. A CAPEDAC vai confirmar o pagamento e entrar em contato.";
+    if(!r.error)cupomAtual=null;
   });
 
   /* eventos */
@@ -967,6 +1013,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     tp.dataset.v=u?"minha-area":"entrar";
     $("tb-perfil-txt").textContent=u?"Perfil":"Entrar";
     $("n-senha").hidden=!u;
+    checaAdmin().then(function(x){$("n-admin").hidden=!x});
     carregaAvatar(u);checaNotif();
   }
   function recortaFoto(file,lado){
@@ -1191,13 +1238,45 @@ Parceiros: os dados da proposta que você enviar.</p>
 
   /* cupom */
   function validade(d){return d&&String(d).slice(0,4)>="3000"?"sem vencimento":"até "+dBR(d)}
+  var cupomAtual=null;
+  function fmt(v){return Number(v).toFixed(2).replace(".",",")}
   $("cupom-ok").addEventListener("click",async function(){
     var cod=$("cupom-cod").value.trim();
+    $("ok-cupom").textContent="";cupomAtual=null;
     if(cod.length<3){erro("e-cupom","Digite o código do cupom.");return}
     if(!db){erro("e-cupom",OFF);return}
-    var r=await db.rpc("resgatar_cupom",{p_codigo:cod});
-    if(r.error){var m=r.error.message||"";erro("e-cupom",/cadastro/.test(m)?"Complete seu cadastro antes de usar o cupom.":/ja_usou/.test(m)?"Você já usou um cupom.":/invalido/.test(m)?"Cupom inválido ou esgotado.":FALHA);return}
-    erro("e-cupom","");$("cupom-cod").value="";location.hash="#minha-area";
+    var r=await db.rpc("aplicar_cupom",{p_codigo:cod});
+    if(r.error){var m=r.error.message||"";erro("e-cupom",/cadastro/.test(m)?"Complete seu cadastro antes de usar o cupom.":/ja_usou/.test(m)?"Você já usou esse cupom.":/invalido/.test(m)?"Cupom inválido, vencido ou esgotado.":FALHA);return}
+    erro("e-cupom","");$("cupom-cod").value="";
+    var d=r.data||{};
+    if(d.tipo==="desconto"){
+      cupomAtual={codigo:d.codigo,desconto:Number(d.desconto),valor:Number(d.valor)};
+      $("ok-cupom").textContent="Cupom aplicado: desconto de R$ "+fmt(d.desconto)+". Você paga R$ "+fmt(d.valor)+" neste mês. Gere o QR do Pix abaixo.";
+      $("pix").hidden=true;
+    }else location.hash="#minha-area";
+  });
+
+  /* esqueci a senha por e-mail e nova senha */
+  $("f-reset").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var em=$("rs-email").value.trim();
+    $("ok-rs").textContent="";
+    if(!/^\S+@\S+\.\S+$/.test(em)){erro("e-rs","Digite um e-mail válido.");return}
+    if(!db){erro("e-rs",OFF);return}
+    var r=await db.auth.resetPasswordForEmail(em,{redirectTo:"https://caped-ac.github.io/"});
+    if(r.error){erro("e-rs",/rate|limit|many|seconds/i.test(r.error.message||"")?"Muitos pedidos. Espere uns minutos e tente de novo.":FALHA);return}
+    erro("e-rs","");$("ok-rs").textContent="Se esse e-mail tiver conta, enviamos um link para criar a nova senha. Olhe também a caixa de spam.";
+  });
+  $("f-nova").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var nv=$("nv-nova").value,rp=$("nv-rep").value;
+    $("ok-nv").textContent="";
+    if(nv.length<8){erro("e-nv","A senha precisa ter pelo menos 8 caracteres.");return}
+    if(nv!==rp){erro("e-nv","As senhas não são iguais.");return}
+    var r=await db.auth.updateUser({password:nv});
+    if(r.error){erro("e-nv","Não foi possível salvar. O link pode ter vencido: peça outro em Esqueci minha senha.");return}
+    erro("e-nv","");$("f-nova").reset();$("ok-nv").textContent="Senha criada! Você já está dentro da sua conta.";
+    atualizaConta();setTimeout(function(){location.hash="#minha-area"},1500);
   });
 
   /* caixinha de notificações */
@@ -1335,14 +1414,35 @@ Parceiros: os dados da proposta que você enviar.</p>
     document.querySelectorAll("[data-ir]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.ir===a))});
     try{sessionStorage.setItem("capedac_aba",a)}catch(e){}
   }
-  document.querySelectorAll("[data-ir]").forEach(function(b){b.addEventListener("click",function(){mostrarAba(b.dataset.ir)})});
+  document.querySelectorAll("[data-ir]").forEach(function(b){b.addEventListener("click",function(){mostrarAba(b.dataset.ir);window.scrollTo(0,0)})});
+  $("hd-menu").addEventListener("click",function(){abreDrawer(true)});
   var abaIni="pend";try{abaIni=sessionStorage.getItem("capedac_aba")||"pend"}catch(e){}
   mostrarAba(abaIni);
+  async function apagaPastas(uid){
+    for(var k=0;k<2;k++){
+      var b=k?"avatares":"exames",l=await db.storage.from(b).list(uid,{limit:100});
+      var nomes=(l.data||[]).map(function(f){return uid+"/"+f.name});
+      if(nomes.length)await db.storage.from(b).remove(nomes);
+    }
+  }
   function desenhaAssoc(){
     var f=($("a-filtro").value||"").trim().toLowerCase(),bx=$("a-cads");bx.textContent="";
-    var l=ASSOC.filter(function(m){return !f||(m.nome+" "+m.cidade+" "+m.telefone).toLowerCase().indexOf(f)>=0});
+    var l=ASSOC.filter(function(m){return !f||(m.nome+" "+m.cidade+" "+m.telefone+" "+m.email).toLowerCase().indexOf(f)>=0});
     bx.appendChild(h("p","small",l.length+" de "+ASSOC.length+" associado(s)"));
-    l.forEach(function(m){bx.appendChild(h("div","card",m.nome+" – "+m.cidade+" – "+m.telefone))});
+    l.forEach(function(m){
+      var c=h("div","card");
+      c.appendChild(h("strong",0,m.nome+(m.eh_admin?" (diretoria)":"")));
+      c.appendChild(h("p","small",m.cidade+" | "+m.telefone));
+      c.appendChild(h("p","small",m.email+" | cadastro em "+dBR((m.criado_em||"").slice(0,10))+(m.socio_ate?" | sócio "+validade(m.socio_ate):"")));
+      if(!m.eh_admin)c.appendChild(btn("Excluir",async function(){
+        if(!confirm("Excluir "+m.nome+" e todos os dados da pessoa (cadastro, pedidos e fotos)? Não tem volta."))return;
+        await apagaPastas(m.user_id);
+        var x=await db.rpc("admin_excluir_conta",{p_user:m.user_id});
+        if(x.error){alert("Não foi possível excluir.");return}
+        renderAdmin();
+      }));
+      bx.appendChild(c);
+    });
   }
   $("a-filtro").addEventListener("input",desenhaAssoc);
 
@@ -1352,12 +1452,15 @@ Parceiros: os dados da proposta que você enviar.</p>
     for(var i=0;i<6;i++)t+=a.charAt(Math.floor(Math.random()*a.length));
     $("cp-cod").value="CAPEDAC-"+t;
   });
+  $("cp-tipo").addEventListener("change",function(){var d=$("cp-tipo").value==="desconto";$("cp-box-desc").hidden=!d;$("cp-box-gratis").hidden=d});
   $("f-cupom").addEventListener("submit",async function(e){
     e.preventDefault();
     var cod=$("cp-cod").value.trim().toUpperCase(),mx=parseInt($("cp-max").value,10),ate=$("cp-ate").value,dias=parseInt($("cp-dias").value,10);
     if(cod.length<4||!/^[A-Z0-9_-]+$/.test(cod)){erro("e-cp","Use 4 ou mais letras ou números, sem espaço nem acento.");return}
     if(!(mx>=1)){erro("e-cp","Diga quantas pessoas podem usar (1 ou mais).");return}
-    var r=await db.from("cupons").insert({codigo:cod,max_usos:mx,valido_ate:ate||null,dias:dias>=1?dias:null,ativo:true});
+    var tipo=$("cp-tipo").value,desc=parseFloat(($("cp-desc").value||"").replace(",","."));
+    if(tipo==="desconto"&&!(desc>=1&&desc<=29)){erro("e-cp","O desconto precisa ficar entre R$ 1 e R$ 29.");return}
+    var r=await db.from("cupons").insert({codigo:cod,max_usos:mx,valido_ate:ate||null,dias:(tipo==="gratis"&&dias>=1)?dias:null,desconto:tipo==="desconto"?desc:null,ativo:true});
     if(r.error){erro("e-cp",/duplicate|unique/i.test(r.error.message||"")?"Já existe um cupom com esse código.":FALHA);return}
     erro("e-cp","");$("f-cupom").reset();$("cp-max").value="1";renderAdmin();
   });
@@ -1372,12 +1475,13 @@ Parceiros: os dados da proposta que você enviar.</p>
   async function renderAdminAgora(){
     var on=await checaAdmin();
     $("a-login").hidden=on;$("a-painel").hidden=!on;
+    document.body.classList.toggle("modo-admin",on&&location.hash==="#admin");
     if(!on)return;
     var R=await Promise.all([
       db.from("eventos").select("*").order("data"),
       db.from("presencas").select("evento_id,nome,vai_levar").order("criado_em"),
       db.from("socios").select("*").order("criado_em",{ascending:false}),
-      db.from("membros").select("user_id,nome,cidade,telefone").order("nome"),
+      db.rpc("admin_associados"),
       db.from("beneficios").select("texto").order("ordem"),
       db.from("sobre").select("conteudo").eq("id","principal").maybeSingle(),
       db.from("pedidos_saude").select("*").order("criado_em",{ascending:false}),
@@ -1409,12 +1513,12 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(!sp.length)vazio(sx,"Nenhum pagamento para confirmar.");
     sp.forEach(function(s){
       var c=h("div","card row");
-      c.appendChild(h("span",0,s.nome+" ("+s.telefone+")"));
+      c.appendChild(h("span",0,s.nome+" ("+s.telefone+") – esperado R$ "+fmt(s.valor||30)+(s.cupom?" (cupom "+s.cupom+")":"")));
       c.appendChild(btn("Confirmar pagamento",async function(){var x=await db.rpc("confirmar_pagamento",{p_id:s.id});if(x.error)alert(FALHA);renderAdmin()},"red"));
       sx.appendChild(c);
     });
     if(!sr.length)vazio(sh,"Nenhum sócio confirmado ainda.");
-    sr.forEach(function(s){sh.appendChild(h("div","card",s.nome+" ("+s.telefone+") – "+s.status+(s.pago_ate?" "+validade(s.pago_ate):"")+(s.origem==="cupom"?" [cupom]":"")))});
+    sr.forEach(function(s){sh.appendChild(h("div","card",s.nome+" ("+s.telefone+") – "+s.status+(s.pago_ate?" "+validade(s.pago_ate):"")+(s.origem==="cupom"?" [cupom "+(s.cupom||"")+"]":"")))});
 
     /* associados, benefícios, sobre */
     ASSOC=mem;desenhaAssoc();
@@ -1492,16 +1596,23 @@ Parceiros: os dados da proposta que você enviar.</p>
       var est=!cp.ativo?"desativado":venc?"vencido":esg?"esgotado":"ativo";
       var c=h("div","card");
       c.appendChild(h("strong",0,cp.codigo+" – "+est));
-      c.appendChild(h("p","small","Usado "+cp.usos+" de "+cp.max_usos+" vez(es) | "+(cp.valido_ate?"válido até "+dBR(cp.valido_ate):"sem data limite")+" | "+(cp.dias?cp.dias+" dias de sócio":"sócio sem vencimento")));
+      c.appendChild(h("p","small","Usado "+cp.usos+" de "+cp.max_usos+" vez(es) | "+(cp.valido_ate?"válido até "+dBR(cp.valido_ate):"sem data limite")+" | "+(cp.desconto?"desconto de R$ "+fmt(cp.desconto):(cp.dias?cp.dias+" dias de sócio":"sócio sem vencimento"))));
       var row=h("div","row");
       row.appendChild(btn(cp.ativo?"Desativar":"Ativar",async function(){await db.from("cupons").update({ativo:!cp.ativo}).eq("codigo",cp.codigo);renderAdmin()}));
       row.appendChild(btn("Remover",async function(){if(!confirm("Remover o cupom "+cp.codigo+"?"))return;await db.from("cupons").delete().eq("codigo",cp.codigo);renderAdmin()}));
-      c.appendChild(row);cx.appendChild(c);
+      var us=soc.filter(function(s){return s.cupom===cp.codigo}).length;
+      if(us&&!cp.desconto)row.appendChild(btn("Tirar o sócio de quem usou ("+us+")",async function(){
+        if(!confirm("Tirar o sócio das "+us+" pessoa(s) que usaram o cupom "+cp.codigo+"?"))return;
+        var d=await db.from("socios").delete().eq("cupom",cp.codigo);
+        if(d.error){alert(FALHA);return}
+        renderAdmin();
+      },"red"));
+      c.appendChild(row);c.appendChild(h("p","small","Desativar só impede novos usos: quem já usou continua sócio."));cx.appendChild(c);
     });
 
     /* número nas Pendências e rolagem vinda da notificação */
     var n=pp.length+sp.length+parp.length;
-    $("ab-pend-n").textContent=n?" ("+n+")":"";
+    $("ab-pend-n").textContent=n?String(n):"";$("ab-pend-n").hidden=!n;
     if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el){var ab=el.closest(".aba");if(ab)mostrarAba(ab.dataset.aba);el.scrollIntoView({behavior:"smooth"})}}
   }
   $("a-entrar").addEventListener("click",async function(){
@@ -1509,9 +1620,9 @@ Parceiros: os dados da proposta que você enviar.</p>
     var r=await db.auth.signInWithPassword({email:$("a-email").value.trim(),password:$("a-senha").value});
     if(r.error){erro("e-adm","E-mail ou senha incorretos.");return}
     if(!(await checaAdmin())){await db.auth.signOut();erro("e-adm","Esta conta não tem permissão de administrador.");return}
-    erro("e-adm","");$("a-senha").value="";renderAdmin();
+    erro("e-adm","");$("a-senha").value="";atualizaConta();renderAdmin();
   });
-  $("a-sair").addEventListener("click",async function(){await db.auth.signOut();renderAdmin()});
+  $("a-sair").addEventListener("click",async function(){await db.auth.signOut();atualizaConta();renderAdmin()});
   $("f-ev").addEventListener("submit",async function(e){
     e.preventDefault();
     if(!$("ev-titulo").value.trim()||!$("ev-data").value){erro("e-ev","Preencha o título e a data.");return}
