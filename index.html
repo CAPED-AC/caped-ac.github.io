@@ -104,6 +104,7 @@ html[data-contraste="alto"]:root{color-scheme:dark}
 .sino .badge{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:var(--red);color:#fff;font-size:.78rem;font-weight:700;display:grid;place-items:center}
 .btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-right:10px;flex:none}
 a.card{display:block;color:inherit;text-decoration:none}
+.abas{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -136,6 +137,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <a class="item" href="#sobre" data-v="sobre">Sobre</a>
   <a class="item" href="#notificacoes" data-v="notificacoes" id="n-notif" hidden>Notificações</a>
   <a class="item" href="#minha-area" data-v="minha-area" id="n-minha" hidden>Meu perfil</a>
+  <a class="item" href="#senha" data-v="senha" id="n-senha" hidden>Alterar minha senha</a>
   <a class="item" href="#entrar" data-v="entrar" id="n-entrar">Entrar ou criar conta</a>
   <a class="item" href="#privacidade" data-v="privacidade">Política de privacidade</a>
   <h2>Aparência</h2>
@@ -405,6 +407,22 @@ Parceiros: os dados da proposta que você enviar.</p>
   </form>
 </section>
 
+<section class="view" id="v-senha" aria-labelledby="t-senha">
+  <h1 id="t-senha">Alterar minha senha</h1>
+  <p class="lead" id="senha-msg"></p>
+  <form id="f-senha" class="card" novalidate>
+    <label for="sn-atual" style="margin-top:0">Senha atual</label>
+    <input id="sn-atual" type="password" autocomplete="current-password">
+    <label for="sn-nova">Nova senha <span class="hint">(mínimo de 8 caracteres)</span></label>
+    <input id="sn-nova" type="password" autocomplete="new-password">
+    <label for="sn-rep">Repita a nova senha</label>
+    <input id="sn-rep" type="password" autocomplete="new-password">
+    <p class="err" id="e-senha" role="alert"></p>
+    <div class="cta"><button class="btn red" type="submit">Salvar nova senha</button></div>
+    <p class="ok" id="ok-senha" role="status"></p>
+  </form>
+</section>
+
 <section class="view" id="v-eventos" aria-labelledby="t-ev">
   <h1 id="t-ev">Eventos e festas</h1>
   <div id="lista-ev"></div>
@@ -429,20 +447,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     <div class="card" id="c-socio"></div>
     <div class="card" id="c-saude"></div>
     <div class="card" id="c-ben"></div>
-    <div class="card" id="c-senha">
-      <h2 style="margin-top:0">Alterar minha senha</h2>
-      <form id="f-senha" novalidate>
-        <label for="sn-atual">Senha atual</label>
-        <input id="sn-atual" type="password" autocomplete="current-password">
-        <label for="sn-nova">Nova senha <span class="hint">(mínimo de 8 caracteres)</span></label>
-        <input id="sn-nova" type="password" autocomplete="new-password">
-        <label for="sn-rep">Repita a nova senha</label>
-        <input id="sn-rep" type="password" autocomplete="new-password">
-        <p class="err" id="e-senha" role="alert"></p>
-        <div class="cta"><button class="btn alt" type="submit">Salvar nova senha</button></div>
-        <p class="ok" id="ok-senha" role="status"></p>
-      </form>
-    </div>
     <div class="cta"><button class="btn alt" id="pf-sair" type="button">Sair da conta</button></div>
   </div>
 </section>
@@ -458,7 +462,23 @@ Parceiros: os dados da proposta que você enviar.</p>
     <div class="cta"><button class="btn" id="a-entrar" type="button">Entrar</button></div>
   </div>
   <div id="a-painel" hidden>
-    <form id="f-ev" class="card" novalidate>
+    <div class="abas" role="group" aria-label="Seções do painel">
+      <button type="button" class="btn alt mini" data-ir="pend" aria-pressed="true">Pendências<span id="ab-pend-n"></span></button>
+      <button type="button" class="btn alt mini" data-ir="ev" aria-pressed="false">Eventos</button>
+      <button type="button" class="btn alt mini" data-ir="ent" aria-pressed="false">Entrevistas</button>
+      <button type="button" class="btn alt mini" data-ir="pes" aria-pressed="false">Pessoas</button>
+      <button type="button" class="btn alt mini" data-ir="site" aria-pressed="false">Site</button>
+    </div>
+
+    <div class="aba" data-aba="pend">
+      <h2>Pagamentos de sócio para confirmar</h2><div id="a-socios"></div>
+      <h2>Pedidos de consulta e exame</h2><div id="a-saude"></div>
+      <details><summary>Histórico de pedidos</summary><div id="a-saude-hist"></div></details>
+      <h2>Propostas de parceria</h2><div id="a-pars"></div>
+    </div>
+
+    <div class="aba" data-aba="ev" hidden>
+      <form id="f-ev" class="card" novalidate>
       <h2 style="margin-top:0">Publicar evento</h2>
       <label for="ev-titulo">Título *</label>
       <input id="ev-titulo" placeholder="Ex.: Festa de fim de ano">
@@ -474,25 +494,11 @@ Parceiros: os dados da proposta que você enviar.</p>
       <div class="cta"><button class="btn" type="submit">Publicar evento</button></div>
       <p class="ok" id="ok-ev" role="status"></p>
     </form>
-    <h2>Eventos publicados</h2><div id="a-evs"></div>
-    <h2>Pagamentos de sócios</h2><div id="a-socios"></div>
-    <h2>Redefinir senha de um membro</h2>
-    <div class="card">
-      <p class="small">Confira a identidade antes (cidade e data de nascimento do cadastro). A pessoa recebe um aviso de que a senha foi trocada.</p>
-      <label for="a-busca-senha" style="margin-top:0">Nome, telefone ou e-mail</label>
-      <input id="a-busca-senha" autocomplete="off">
-      <div class="cta"><button class="btn alt" id="a-busca-ok" type="button">Buscar</button></div>
-      <div id="a-reset" style="margin-top:12px"></div>
+      <h2>Eventos publicados</h2><div id="a-evs"></div>
     </div>
-    <h2>Consultas e exames (pedidos)</h2><div id="a-saude"></div>
-    <h2>Benefícios dos sócios</h2>
-    <div class="card">
-      <label for="a-ben" style="margin-top:0">Um benefício por linha</label>
-      <textarea id="a-ben" rows="6"></textarea>
-      <div class="cta"><button class="btn" id="a-salvar-ben" type="button">Salvar benefícios</button></div>
-      <p class="ok" id="ok-ben" role="status"></p>
-    </div>
-    <h2>Entrevista CAPEDAC (feed)</h2>
+
+    <div class="aba" data-aba="ent" hidden>
+      <h2>Entrevista CAPEDAC (feed)</h2>
     <form id="f-hist" class="card" novalidate>
       <label for="h-titulo" style="margin-top:0">Título *</label>
       <input id="h-titulo" maxlength="150">
@@ -508,21 +514,61 @@ Parceiros: os dados da proposta que você enviar.</p>
       <p class="ok" id="ok-hist" role="status"></p>
     </form>
     <div id="a-hists"></div>
-    <h2>Página Sobre</h2>
+    </div>
+
+    <div class="aba" data-aba="pes" hidden>
+      <h2>Associados</h2>
+      <input id="a-filtro" placeholder="Buscar por nome, cidade ou telefone" autocomplete="off" aria-label="Buscar associado">
+      <div id="a-cads" style="margin-top:12px"></div>
+      <h2>Redefinir senha de um membro</h2>
+    <div class="card">
+      <p class="small">Confira a identidade antes (cidade e data de nascimento do cadastro). A pessoa recebe um aviso de que a senha foi trocada.</p>
+      <label for="a-busca-senha" style="margin-top:0">Nome, telefone ou e-mail</label>
+      <input id="a-busca-senha" autocomplete="off">
+      <div class="cta"><button class="btn alt" id="a-busca-ok" type="button">Buscar</button></div>
+      <div id="a-reset" style="margin-top:12px"></div>
+    </div>
+      <h2>Cupons de sócio</h2>
+      <form id="f-cupom" class="card" novalidate>
+        <label for="cp-cod" style="margin-top:0">Código</label>
+        <input id="cp-cod" maxlength="40" autocapitalize="characters" autocomplete="off">
+        <div class="cta" style="margin-top:8px"><button class="btn alt mini" id="cp-gerar" type="button">Sugerir um código difícil de adivinhar</button></div>
+        <label for="cp-max">Quantas pessoas podem usar</label>
+        <input id="cp-max" type="number" inputmode="numeric" min="1" value="1">
+        <label for="cp-ate">Válido até <span class="hint">(opcional)</span></label>
+        <input id="cp-ate" type="date">
+        <label for="cp-dias">Dias de sócio que o cupom dá <span class="hint">(vazio = sem vencimento)</span></label>
+        <input id="cp-dias" type="number" inputmode="numeric" min="1">
+        <p class="err" id="e-cp" role="alert"></p>
+        <div class="cta"><button class="btn" type="submit">Criar cupom</button></div>
+      </form>
+      <div id="a-cupons"></div>
+      <h2>Exportar listas</h2>
+    <div class="card">
+      <p class="small">Gera uma planilha (CSV) para abrir no Excel ou Google Planilhas. Contém dados pessoais, então guarde com cuidado.</p>
+      <div class="cta"><button class="btn alt" id="x-membros" type="button">Baixar cadastros</button><button class="btn alt" id="x-socios" type="button">Baixar sócios</button></div>
+      <p class="ok" id="ok-x" role="status"></p>
+    </div>
+      <details><summary>Histórico de sócios</summary><div id="a-socios-hist"></div></details>
+    </div>
+
+    <div class="aba" data-aba="site" hidden>
+      <h2>Benefícios dos sócios</h2>
+    <div class="card">
+      <label for="a-ben" style="margin-top:0">Um benefício por linha</label>
+      <textarea id="a-ben" rows="6"></textarea>
+      <div class="cta"><button class="btn" id="a-salvar-ben" type="button">Salvar benefícios</button></div>
+      <p class="ok" id="ok-ben" role="status"></p>
+    </div>
+      <h2>Página Sobre</h2>
     <div class="card">
       <label for="a-sobre" style="margin-top:0">Texto da página (deixe uma linha em branco entre parágrafos)</label>
       <textarea id="a-sobre" rows="10"></textarea>
       <div class="cta"><button class="btn" id="a-salvar-sobre" type="button">Salvar texto</button></div>
       <p class="ok" id="ok-sobre" role="status"></p>
     </div>
-    <h2>Exportar listas</h2>
-    <div class="card">
-      <p class="small">Gera uma planilha (CSV) para abrir no Excel ou Google Planilhas. Contém dados pessoais, então guarde com cuidado.</p>
-      <div class="cta"><button class="btn alt" id="x-membros" type="button">Baixar cadastros</button><button class="btn alt" id="x-socios" type="button">Baixar sócios</button></div>
-      <p class="ok" id="ok-x" role="status"></p>
+      <h2>Parceiros publicados</h2><div id="a-pars-ok"></div>
     </div>
-    <h2>Parceiros</h2><div id="a-pars"></div>
-    <h2>Cadastros recebidos</h2><div id="a-cads"></div>
     <div class="cta"><button class="btn alt" id="a-sair" type="button">Sair do painel</button></div>
   </div>
 </section>
@@ -561,7 +607,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,senha:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
     document.querySelectorAll("[data-v]").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
@@ -577,6 +623,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(v==="saude")renderSaude();
     if(v==="notificacoes")renderNotificacoes();
     if(v==="cadastro")preencheCadastro();
+    if(v==="senha")usuario().then(function(u){$("senha-msg").textContent=u?"":"Entre na sua conta para alterar a senha."});
     if(v==="inicio"||v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
   window.addEventListener("hashchange",route);
@@ -919,6 +966,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     tp.href=hp.href=u?"#minha-area":"#entrar";
     tp.dataset.v=u?"minha-area":"entrar";
     $("tb-perfil-txt").textContent=u?"Perfil":"Entrar";
+    $("n-senha").hidden=!u;
     carregaAvatar(u);checaNotif();
   }
   function recortaFoto(file,lado){
@@ -1281,50 +1329,106 @@ Parceiros: os dados da proposta que você enviar.</p>
     var r=await db.rpc("is_admin");
     return r.data===true;
   }
+  var ASSOC=[],adminBusy=false,adminAgain=false;
+  function mostrarAba(a){
+    document.querySelectorAll(".aba").forEach(function(e){e.hidden=e.dataset.aba!==a});
+    document.querySelectorAll("[data-ir]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.ir===a))});
+    try{sessionStorage.setItem("capedac_aba",a)}catch(e){}
+  }
+  document.querySelectorAll("[data-ir]").forEach(function(b){b.addEventListener("click",function(){mostrarAba(b.dataset.ir)})});
+  var abaIni="pend";try{abaIni=sessionStorage.getItem("capedac_aba")||"pend"}catch(e){}
+  mostrarAba(abaIni);
+  function desenhaAssoc(){
+    var f=($("a-filtro").value||"").trim().toLowerCase(),bx=$("a-cads");bx.textContent="";
+    var l=ASSOC.filter(function(m){return !f||(m.nome+" "+m.cidade+" "+m.telefone).toLowerCase().indexOf(f)>=0});
+    bx.appendChild(h("p","small",l.length+" de "+ASSOC.length+" associado(s)"));
+    l.forEach(function(m){bx.appendChild(h("div","card",m.nome+" – "+m.cidade+" – "+m.telefone))});
+  }
+  $("a-filtro").addEventListener("input",desenhaAssoc);
+
+  /* cupons (criar) */
+  $("cp-gerar").addEventListener("click",function(){
+    var a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",t="";
+    for(var i=0;i<6;i++)t+=a.charAt(Math.floor(Math.random()*a.length));
+    $("cp-cod").value="CAPEDAC-"+t;
+  });
+  $("f-cupom").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var cod=$("cp-cod").value.trim().toUpperCase(),mx=parseInt($("cp-max").value,10),ate=$("cp-ate").value,dias=parseInt($("cp-dias").value,10);
+    if(cod.length<4||!/^[A-Z0-9_-]+$/.test(cod)){erro("e-cp","Use 4 ou mais letras ou números, sem espaço nem acento.");return}
+    if(!(mx>=1)){erro("e-cp","Diga quantas pessoas podem usar (1 ou mais).");return}
+    var r=await db.from("cupons").insert({codigo:cod,max_usos:mx,valido_ate:ate||null,dias:dias>=1?dias:null,ativo:true});
+    if(r.error){erro("e-cp",/duplicate|unique/i.test(r.error.message||"")?"Já existe um cupom com esse código.":FALHA);return}
+    erro("e-cp","");$("f-cupom").reset();$("cp-max").value="1";renderAdmin();
+  });
+
+  /* painel: uma atualização por vez (evita lista duplicada) */
   async function renderAdmin(){
+    if(adminBusy){adminAgain=true;return}
+    adminBusy=true;
+    try{await renderAdminAgora()}finally{adminBusy=false}
+    if(adminAgain){adminAgain=false;renderAdmin()}
+  }
+  async function renderAdminAgora(){
     var on=await checaAdmin();
     $("a-login").hidden=on;$("a-painel").hidden=!on;
     if(!on)return;
-    var r=await db.from("eventos").select("*").order("data"),bx=$("a-evs");bx.textContent="";
-    var pr=await db.from("presencas").select("evento_id,nome,vai_levar").order("criado_em");
-    var evl=r.data||[];
-    if(!evl.length)bx.appendChild(h("p","small","Nenhum evento publicado."));
-    evl.forEach(function(e){
+    var R=await Promise.all([
+      db.from("eventos").select("*").order("data"),
+      db.from("presencas").select("evento_id,nome,vai_levar").order("criado_em"),
+      db.from("socios").select("*").order("criado_em",{ascending:false}),
+      db.from("membros").select("user_id,nome,cidade,telefone").order("nome"),
+      db.from("beneficios").select("texto").order("ordem"),
+      db.from("sobre").select("conteudo").eq("id","principal").maybeSingle(),
+      db.from("pedidos_saude").select("*").order("criado_em",{ascending:false}),
+      db.from("historias").select("*").order("criado_em",{ascending:false}),
+      db.from("parceiros").select("*").order("criado_em",{ascending:false}),
+      db.from("cupons").select("*").order("criado_em",{ascending:false})
+    ]);
+    var ev=R[0].data||[],pres=R[1].data||[],soc=R[2].data||[],mem=R[3].data||[],ben=R[4].data||[],sob=R[5].data,ped=R[6].data||[],his=R[7].data||[],par=R[8].data||[],cup=R[9].data||[];
+    function zera(id){var b=$(id);b.textContent="";return b}
+    function vazio(b,t){b.appendChild(h("p","small",t))}
+
+    /* eventos */
+    var bx=zera("a-evs");
+    if(!ev.length)vazio(bx,"Nenhum evento publicado.");
+    ev.forEach(function(e){
       var c=h("div","card"),row=h("div","row");
       row.appendChild(h("strong",0,dBR(e.data)+" – "+e.titulo));
       row.appendChild(btn("Remover",async function(){if(!confirm("Remover este evento e as confirmações dele?"))return;await db.from("eventos").delete().eq("id",e.id);renderAdmin()}));
       c.appendChild(row);
-      var ps=(pr.data||[]).filter(function(p){return p.evento_id===e.id});
+      var ps=pres.filter(function(p){return p.evento_id===e.id});
       c.appendChild(h("p","small",ps.length+" pessoa(s) confirmada(s)"));
       ps.forEach(function(p){c.appendChild(h("p","small","• "+p.nome+(p.vai_levar?" – vai levar: "+p.vai_levar:"")))});
       bx.appendChild(c);
     });
-    r=await db.from("socios").select("*").order("criado_em",{ascending:false});
-    var sx=$("a-socios");sx.textContent="";
-    if(!(r.data||[]).length)sx.appendChild(h("p","small","Nenhum aviso de pagamento."));
-    (r.data||[]).forEach(function(s){
+
+    /* sócios */
+    var sx=zera("a-socios"),sh=zera("a-socios-hist");
+    var sp=soc.filter(function(s){return s.status==="aguardando"}),sr=soc.filter(function(s){return s.status!=="aguardando"});
+    if(!sp.length)vazio(sx,"Nenhum pagamento para confirmar.");
+    sp.forEach(function(s){
       var c=h("div","card row");
-      c.appendChild(h("span",0,s.nome+" ("+s.telefone+") – "+s.status+(s.pago_ate?" "+validade(s.pago_ate):"")+(s.origem==="cupom"?" [cupom]":"")));
-      if(s.status!=="confirmado")c.appendChild(btn("Confirmar pagamento",async function(){var x=await db.rpc("confirmar_pagamento",{p_id:s.id});if(x.error)alert(FALHA);renderAdmin()},"red"));
+      c.appendChild(h("span",0,s.nome+" ("+s.telefone+")"));
+      c.appendChild(btn("Confirmar pagamento",async function(){var x=await db.rpc("confirmar_pagamento",{p_id:s.id});if(x.error)alert(FALHA);renderAdmin()},"red"));
       sx.appendChild(c);
     });
-    r=await db.from("membros").select("nome,cidade,telefone").order("criado_em",{ascending:false});
-    var cx=$("a-cads");cx.textContent="";
-    if(!(r.data||[]).length)cx.appendChild(h("p","small","Nenhum cadastro recebido."));
-    (r.data||[]).forEach(function(p){cx.appendChild(h("div","card",p.nome+" – "+p.cidade+" – "+p.telefone))});
-    r=await db.from("beneficios").select("texto").order("ordem");
-    $("a-ben").value=(r.data||[]).map(function(x){return x.texto}).join("\n");
-    r=await db.from("sobre").select("conteudo").eq("id","principal").maybeSingle();
-    $("a-sobre").value=(r.data&&r.data.conteudo)||"";
-    var ps2=await db.from("pedidos_saude").select("*").order("criado_em",{ascending:false});
-    var mem=await db.from("membros").select("user_id,nome,telefone"),mapa={};
-    (mem.data||[]).forEach(function(m){mapa[m.user_id]=m});
-    var sx2=$("a-saude");sx2.textContent="";
-    var lp=ps2.data||[];
-    if(!lp.length)sx2.appendChild(h("p","small","Nenhum pedido de consulta ou exame."));
-    lp.forEach(function(p){
+    if(!sr.length)vazio(sh,"Nenhum sócio confirmado ainda.");
+    sr.forEach(function(s){sh.appendChild(h("div","card",s.nome+" ("+s.telefone+") – "+s.status+(s.pago_ate?" "+validade(s.pago_ate):"")+(s.origem==="cupom"?" [cupom]":"")))});
+
+    /* associados, benefícios, sobre */
+    ASSOC=mem;desenhaAssoc();
+    $("a-ben").value=ben.map(function(x){return x.texto}).join("\n");
+    $("a-sobre").value=(sob&&sob.conteudo)||"";
+
+    /* pedidos de consulta e exame */
+    var mapa={};mem.forEach(function(m){mapa[m.user_id]=m});
+    var sd=zera("a-saude"),sdh=zera("a-saude-hist");
+    var pp=ped.filter(function(p){return p.status==="pendente"}),pq=ped.filter(function(p){return p.status!=="pendente"});
+    if(!pp.length)vazio(sd,"Nenhum pedido pendente.");
+    pp.forEach(function(p){
       var m=mapa[p.user_id]||{},c=h("div","card");
-      c.appendChild(h("strong",0,(m.nome||"Sócio")+" – "+p.tipo+" ("+p.status+")"));
+      c.appendChild(h("strong",0,(m.nome||"Sócio")+" – "+p.tipo));
       c.appendChild(h("p","small","Telefone: "+(m.telefone||"não informado")));
       c.appendChild(h("p",0,p.descricao));
       if(p.foto_path){
@@ -1334,42 +1438,71 @@ Parceiros: os dados da proposta que você enviar.</p>
         });
         c.appendChild(bf);
       }
-      if(p.status==="pendente"){
-        var dt=h("input");dt.type="date";dt.setAttribute("aria-label","Data marcada");dt.style.marginTop="8px";
-        var lc=h("input");lc.placeholder="Local e observações (ex.: Clínica X, levar documento)";lc.maxLength=200;lc.setAttribute("aria-label","Local e observações");lc.style.marginTop="8px";
-        var row=h("div","row");row.style.marginTop="8px";
-        row.appendChild(btn("Confirmar marcado",async function(){
-          if(!dt.value){alert("Escolha a data marcada.");return}
-          await db.from("pedidos_saude").update({status:"marcado",data_marcada:dt.value,local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()},"red"));
-        row.appendChild(btn("Não consegui marcar",async function(){
-          await db.from("pedidos_saude").update({status:"cancelado",local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()}));
-        c.appendChild(dt);c.appendChild(lc);c.appendChild(row);
-      }else if(p.status==="marcado")c.appendChild(h("p","ok","Marcado para "+dBR(p.data_marcada)+(p.local_marcado?" – "+p.local_marcado:"")));
-      sx2.appendChild(c);
+      var dt=h("input");dt.type="date";dt.setAttribute("aria-label","Data marcada");dt.style.marginTop="8px";
+      var lc=h("input");lc.placeholder="Local e observações (ex.: Clínica X, levar documento)";lc.maxLength=200;lc.setAttribute("aria-label","Local e observações");lc.style.marginTop="8px";
+      var row=h("div","row");row.style.marginTop="8px";
+      row.appendChild(btn("Confirmar marcado",async function(){
+        if(!dt.value){alert("Escolha a data marcada.");return}
+        await db.from("pedidos_saude").update({status:"marcado",data_marcada:dt.value,local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()},"red"));
+      row.appendChild(btn("Não consegui marcar",async function(){
+        await db.from("pedidos_saude").update({status:"cancelado",local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()}));
+      c.appendChild(dt);c.appendChild(lc);c.appendChild(row);
+      sd.appendChild(c);
     });
-    r=await db.from("historias").select("*").order("criado_em",{ascending:false});
-    var hx=$("a-hists");hx.textContent="";
-    (r.data||[]).forEach(function(hs){
+    if(!pq.length)vazio(sdh,"Nada no histórico.");
+    pq.forEach(function(p){var m=mapa[p.user_id]||{};sdh.appendChild(h("div","card",(m.nome||"Sócio")+" – "+p.tipo+" ("+p.status+")"+(p.data_marcada?" – "+dBR(p.data_marcada):"")))});
+
+    /* parceiros */
+    var px=zera("a-pars"),po=zera("a-pars-ok");
+    var parp=par.filter(function(p){return p.status!=="aprovado"}),paro=par.filter(function(p){return p.status==="aprovado"});
+    if(!parp.length)vazio(px,"Nenhuma proposta pendente.");
+    parp.forEach(function(p){
+      var c=h("div","card");
+      c.appendChild(h("p",0,p.nome+" – "+p.area));
+      c.appendChild(h("p","small","Registro: "+(p.registro||"não informado")+" | "+p.cidade+" | "+p.contato));
+      if(p.descricao)c.appendChild(h("p","small",p.descricao));
+      var row=h("div","row");
+      row.appendChild(btn("Aprovar",async function(){await db.from("parceiros").update({status:"aprovado"}).eq("id",p.id);renderAdmin()},"red"));
+      row.appendChild(btn("Remover",async function(){await db.from("parceiros").delete().eq("id",p.id);renderAdmin()}));
+      c.appendChild(row);px.appendChild(c);
+    });
+    if(!paro.length)vazio(po,"Nenhum parceiro publicado.");
+    paro.forEach(function(p){
+      var c=h("div","card row");
+      c.appendChild(h("span",0,p.nome+" – "+p.area));
+      c.appendChild(btn("Remover",async function(){if(!confirm("Remover este parceiro do site?"))return;await db.from("parceiros").delete().eq("id",p.id);renderAdmin()}));
+      po.appendChild(c);
+    });
+
+    /* entrevistas */
+    var hx=zera("a-hists");
+    his.forEach(function(hs){
       var c=h("div","card row");
       c.appendChild(h("span",0,hs.titulo+(hs.video_path?" (com vídeo)":"")));
       c.appendChild(btn("Editar",function(){editHist=hs.id;editVideo=hs.video_path||null;$("h-titulo").value=hs.titulo;$("h-texto").value=hs.texto;$("h-link").value=hs.link||"";$("h-video").value="";$("h-ok").checked=false;$("h-salvar").textContent="Salvar alterações";$("h-cancelar").hidden=false;$("f-hist").scrollIntoView({behavior:"smooth"})}));
       c.appendChild(btn("Remover",async function(){if(!confirm("Remover esta entrevista (e o vídeo)?"))return;if(hs.video_path)await db.storage.from("entrevistas").remove([hs.video_path]);await db.from("historias").delete().eq("id",hs.id);renderAdmin()}));
       hx.appendChild(c);
     });
-    r=await db.from("parceiros").select("*").order("criado_em",{ascending:false});
-    var px=$("a-pars");px.textContent="";
-    if(!(r.data||[]).length)px.appendChild(h("p","small","Nenhuma proposta de parceiro."));
-    (r.data||[]).forEach(function(p){
+
+    /* cupons */
+    var cx=zera("a-cupons"),hoje=new Date().toISOString().slice(0,10);
+    if(!cup.length)vazio(cx,"Nenhum cupom criado.");
+    cup.forEach(function(cp){
+      var venc=cp.valido_ate&&cp.valido_ate<hoje,esg=cp.usos>=cp.max_usos;
+      var est=!cp.ativo?"desativado":venc?"vencido":esg?"esgotado":"ativo";
       var c=h("div","card");
-      c.appendChild(h("p",0,p.nome+" – "+p.area+" ("+p.status+")"));
-      c.appendChild(h("p","small","Registro: "+(p.registro||"não informado")+" | "+p.cidade+" | "+p.contato));
-      if(p.descricao)c.appendChild(h("p","small",p.descricao));
+      c.appendChild(h("strong",0,cp.codigo+" – "+est));
+      c.appendChild(h("p","small","Usado "+cp.usos+" de "+cp.max_usos+" vez(es) | "+(cp.valido_ate?"válido até "+dBR(cp.valido_ate):"sem data limite")+" | "+(cp.dias?cp.dias+" dias de sócio":"sócio sem vencimento")));
       var row=h("div","row");
-      if(p.status!=="aprovado")row.appendChild(btn("Aprovar",async function(){await db.from("parceiros").update({status:"aprovado"}).eq("id",p.id);renderAdmin()},"red"));
-      row.appendChild(btn("Remover",async function(){await db.from("parceiros").delete().eq("id",p.id);renderAdmin()}));
-      c.appendChild(row);px.appendChild(c);
+      row.appendChild(btn(cp.ativo?"Desativar":"Ativar",async function(){await db.from("cupons").update({ativo:!cp.ativo}).eq("codigo",cp.codigo);renderAdmin()}));
+      row.appendChild(btn("Remover",async function(){if(!confirm("Remover o cupom "+cp.codigo+"?"))return;await db.from("cupons").delete().eq("codigo",cp.codigo);renderAdmin()}));
+      c.appendChild(row);cx.appendChild(c);
     });
-    if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el)el.scrollIntoView({behavior:"smooth"})}
+
+    /* número nas Pendências e rolagem vinda da notificação */
+    var n=pp.length+sp.length+parp.length;
+    $("ab-pend-n").textContent=n?" ("+n+")":"";
+    if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el){var ab=el.closest(".aba");if(ab)mostrarAba(ab.dataset.aba);el.scrollIntoView({behavior:"smooth"})}}
   }
   $("a-entrar").addEventListener("click",async function(){
     if(!db){erro("e-adm",OFF);return}
