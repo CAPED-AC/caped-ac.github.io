@@ -113,6 +113,13 @@ a.card{display:block;color:inherit;text-decoration:none}
 .modo-admin .hd-menu{display:grid}
 .tab[aria-pressed="true"]{color:var(--navy)}
 .tab .nb{position:absolute;top:2px;left:calc(50% + 6px);min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--red);color:#fff;font-size:.75rem;font-weight:700;display:grid;place-items:center}
+.selo{display:inline-block;background:var(--navy);color:var(--on-navy);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700;margin-left:8px;vertical-align:middle}
+.selo-dir{background:var(--red);color:#fff}
+.acc{width:100%;justify-content:space-between;margin:12px 0 0;text-align:left}
+.acc::after{content:"▾";margin-left:12px}
+.acc[aria-expanded="true"]::after{content:"▴"}
+.acc-n{display:inline-block;background:var(--red);color:#fff;border-radius:999px;min-width:24px;padding:0 8px;margin-left:10px;font-size:.85rem;text-align:center}
+.acc-corpo{margin:8px 0 4px}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -147,7 +154,8 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <a class="item" href="#notificacoes" data-v="notificacoes" id="n-notif" hidden>Notificações</a>
   <a class="item" href="#minha-area" data-v="minha-area" id="n-minha" hidden>Meu perfil</a>
   <a class="item" href="#senha" data-v="senha" id="n-senha" hidden>Alterar minha senha</a>
-  <a class="item" href="#admin" data-v="admin" id="n-admin" hidden>Painel da diretoria</a>
+  <a class="item" href="#admin" data-v="admin" id="n-admin" hidden>Voltar ao painel da diretoria</a>
+  <a class="item" href="#inicio" id="n-membro" hidden>Ver o app como associado</a>
   <a class="item" href="#entrar" data-v="entrar" id="n-entrar">Entrar ou criar conta</a>
   <a class="item" href="#privacidade" data-v="privacidade">Política de privacidade</a>
   <h2>Aparência</h2>
@@ -497,10 +505,12 @@ Parceiros: os dados da proposta que você enviar.</p>
   </div>
   <div id="a-painel" hidden>
     <div class="aba" data-aba="pend">
-      <h2>Pagamentos de sócio para confirmar</h2><div id="a-socios"></div>
-      <h2>Pedidos de consulta e exame</h2><div id="a-saude"></div>
-      <details><summary>Histórico de pedidos</summary><div id="a-saude-hist"></div></details>
-      <h2>Propostas de parceria</h2><div id="a-pars"></div>
+      <button type="button" class="btn acc" data-acc="acc-pag" aria-expanded="false" aria-controls="acc-pag"><span class="acc-t">Pagamentos de sócio para confirmar<span class="acc-n" id="n-pag" hidden></span></span></button>
+      <div id="acc-pag" class="acc-corpo" hidden><div id="a-socios"></div></div>
+      <button type="button" class="btn acc" data-acc="acc-ped" aria-expanded="false" aria-controls="acc-ped"><span class="acc-t">Pedidos de consulta e exame<span class="acc-n" id="n-ped" hidden></span></span></button>
+      <div id="acc-ped" class="acc-corpo" hidden><div id="a-saude"></div><details><summary>Histórico de pedidos</summary><div id="a-saude-hist"></div></details></div>
+      <button type="button" class="btn acc" data-acc="acc-par" aria-expanded="false" aria-controls="acc-par"><span class="acc-t">Propostas de parceria<span class="acc-n" id="n-par" hidden></span></span></button>
+      <div id="acc-par" class="acc-corpo" hidden><div id="a-pars"></div></div>
     </div>
 
     <div class="aba" data-aba="ev" hidden>
@@ -543,8 +553,13 @@ Parceiros: os dados da proposta que você enviar.</p>
     </div>
 
     <div class="aba" data-aba="pes" hidden>
-      <h2>Associados</h2>
-      <input id="a-filtro" placeholder="Buscar por nome, cidade ou telefone" autocomplete="off" aria-label="Buscar associado">
+      <h2>Membros</h2>
+      <p class="small" id="a-resumo"></p>
+      <div class="seg" role="group" aria-label="Filtro de membros">
+        <button type="button" class="btn alt mini" data-af="todos" aria-pressed="true">Todos</button>
+        <button type="button" class="btn alt mini" data-af="socios" aria-pressed="false">Só sócios</button>
+      </div>
+      <input id="a-filtro" placeholder="Buscar por nome, cidade, telefone ou e-mail" autocomplete="off" aria-label="Buscar membro" style="margin-top:12px">
       <div id="a-cads" style="margin-top:12px"></div>
       <h2>Redefinir senha de um membro</h2>
     <div class="card">
@@ -578,12 +593,10 @@ Parceiros: os dados da proposta que você enviar.</p>
         <div class="cta"><button class="btn" type="submit">Criar cupom</button></div>
       </form>
       <div id="a-cupons"></div>
-      <h2>Exportar listas</h2>
-    <div class="card">
+      <details><summary>Baixar planilhas (cópia de segurança)</summary><div class="card">
       <p class="small">Gera uma planilha (CSV) para abrir no Excel ou Google Planilhas. Contém dados pessoais, então guarde com cuidado.</p>
       <div class="cta"><button class="btn alt" id="x-membros" type="button">Baixar cadastros</button><button class="btn alt" id="x-socios" type="button">Baixar sócios</button></div>
-      <p class="ok" id="ok-x" role="status"></p>
-    </div>
+      <p class="ok" id="ok-x" role="status"></p></div></details>
       <details><summary>Histórico de sócios</summary><div id="a-socios-hist"></div></details>
     </div>
 
@@ -604,7 +617,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     </div>
       <h2>Parceiros publicados</h2><div id="a-pars-ok"></div>
     </div>
-    <div class="cta"><button class="btn alt" id="a-sair" type="button">Sair do painel</button></div>
   </div>
 </section>
 
@@ -621,8 +633,8 @@ Parceiros: os dados da proposta que você enviar.</p>
   <button type="button" class="tab" data-ir="pend" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Pendências</span><span class="nb" id="ab-pend-n" hidden></span></button>
   <button type="button" class="tab" data-ir="ev" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span>Eventos</span></button>
   <button type="button" class="tab" data-ir="ent" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 7l-7 5 7 5V7zM3 5h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg><span>Entrevistas</span></button>
-  <button type="button" class="tab" data-ir="pes" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Pessoas</span></button>
-  <button type="button" class="tab" data-ir="site" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Site</span></button>
+  <button type="button" class="tab" data-ir="pes" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Membros</span></button>
+  <button type="button" class="tab" data-ir="site" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span>Conteúdo</span></button>
 </div>
 <script>
 (function(){
@@ -636,6 +648,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   var fav=document.createElement("link");fav.rel="icon";fav.href=LOGO;document.head.appendChild(fav);
 
   var $=function(id){return document.getElementById(id)};
+  var hashInicial=location.hash,ehAdmin=false,irAdminUmaVez=true;
   var db=null;
   try{if(SUPABASE_URL.indexOf("http")===0)db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){}
   if(db)db.auth.onAuthStateChange(function(ev){if(ev==="PASSWORD_RECOVERY")setTimeout(function(){location.hash="#nova-senha"},0)});
@@ -657,7 +670,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     });
     window.scrollTo(0,0);
     if(v==="eventos")renderEventos();
-    if(v!=="admin")document.body.classList.remove("modo-admin");
+    if(v==="admin"&&ehAdmin&&modoPref()!=="admin")setModoPref("admin");
     if(v==="admin")renderAdmin();
     if(v==="minha-area")renderMinhaArea();
     if(v==="parceiros"){renderParceiros();atualizaConta()}
@@ -1013,7 +1026,11 @@ Parceiros: os dados da proposta que você enviar.</p>
     tp.dataset.v=u?"minha-area":"entrar";
     $("tb-perfil-txt").textContent=u?"Perfil":"Entrar";
     $("n-senha").hidden=!u;
-    checaAdmin().then(function(x){$("n-admin").hidden=!x});
+    checaAdmin().then(function(x){
+      ehAdmin=x;aplicaModo();
+      if(x&&irAdminUmaVez&&modoPref()==="admin"&&(!hashInicial||hashInicial==="#inicio")&&(!location.hash||location.hash==="#inicio"))location.hash="#admin";
+      irAdminUmaVez=false;
+    });
     carregaAvatar(u);checaNotif();
   }
   function recortaFoto(file,lado){
@@ -1414,7 +1431,16 @@ Parceiros: os dados da proposta que você enviar.</p>
     document.querySelectorAll("[data-ir]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.ir===a))});
     try{sessionStorage.setItem("capedac_aba",a)}catch(e){}
   }
-  document.querySelectorAll("[data-ir]").forEach(function(b){b.addEventListener("click",function(){mostrarAba(b.dataset.ir);window.scrollTo(0,0)})});
+  function modoPref(){try{return localStorage.getItem("capedac_modo")||"admin"}catch(e){return "admin"}}
+  function aplicaModo(){
+    var adm=ehAdmin&&modoPref()==="admin";
+    document.body.classList.toggle("modo-admin",adm);
+    $("n-admin").hidden=!(ehAdmin&&!adm);$("n-membro").hidden=!(ehAdmin&&adm);
+  }
+  function setModoPref(m){try{localStorage.setItem("capedac_modo",m)}catch(e){}aplicaModo()}
+  $("n-admin").addEventListener("click",function(){setModoPref("admin")});
+  $("n-membro").addEventListener("click",function(){setModoPref("membro")});
+  document.querySelectorAll("[data-ir]").forEach(function(b){b.addEventListener("click",function(){if(location.hash!=="#admin")location.hash="#admin";mostrarAba(b.dataset.ir);window.scrollTo(0,0)})});
   $("hd-menu").addEventListener("click",function(){abreDrawer(true)});
   var abaIni="pend";try{abaIni=sessionStorage.getItem("capedac_aba")||"pend"}catch(e){}
   mostrarAba(abaIni);
@@ -1425,22 +1451,42 @@ Parceiros: os dados da proposta que você enviar.</p>
       if(nomes.length)await db.storage.from(b).remove(nomes);
     }
   }
+  function abreAcc(id,sim){
+    var b=document.querySelector('[data-acc="'+id+'"]'),c=$(id);
+    if(!b||!c)return;
+    c.hidden=!sim;b.setAttribute("aria-expanded",String(sim));
+  }
+  document.querySelectorAll("[data-acc]").forEach(function(b){b.addEventListener("click",function(){var id=b.dataset.acc;abreAcc(id,$(id).hidden)})});
+  var assocFiltro="todos";
+  document.querySelectorAll("[data-af]").forEach(function(b){b.addEventListener("click",function(){
+    assocFiltro=b.dataset.af;
+    document.querySelectorAll("[data-af]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});
+    desenhaAssoc();
+  })});
+  function ehSocio(m){var lim=new Date(Date.now()-7*864e5).toISOString().slice(0,10);return !!m.socio_ate&&m.socio_ate>=lim}
   function desenhaAssoc(){
     var f=($("a-filtro").value||"").trim().toLowerCase(),bx=$("a-cads");bx.textContent="";
-    var l=ASSOC.filter(function(m){return !f||(m.nome+" "+m.cidade+" "+m.telefone+" "+m.email).toLowerCase().indexOf(f)>=0});
-    bx.appendChild(h("p","small",l.length+" de "+ASSOC.length+" associado(s)"));
+    $("a-resumo").textContent=ASSOC.length+" membro(s) | "+ASSOC.filter(ehSocio).length+" sócio(s)";
+    var l=ASSOC.filter(function(m){return (assocFiltro==="todos"||ehSocio(m))&&(!f||(m.nome+" "+m.cidade+" "+m.telefone+" "+m.email).toLowerCase().indexOf(f)>=0)});
+    if(!l.length)bx.appendChild(h("p","small","Nenhum membro encontrado."));
     l.forEach(function(m){
-      var c=h("div","card");
-      c.appendChild(h("strong",0,m.nome+(m.eh_admin?" (diretoria)":"")));
-      c.appendChild(h("p","small",m.cidade+" | "+m.telefone));
-      c.appendChild(h("p","small",m.email+" | cadastro em "+dBR((m.criado_em||"").slice(0,10))+(m.socio_ate?" | sócio "+validade(m.socio_ate):"")));
-      if(!m.eh_admin)c.appendChild(btn("Excluir",async function(){
+      var c=h("div","card"),l1=h("div");
+      l1.appendChild(h("strong",0,m.nome));
+      if(ehSocio(m))l1.appendChild(h("span","selo","★ Sócio"));
+      if(m.eh_admin)l1.appendChild(h("span","selo selo-dir","Diretoria"));
+      c.appendChild(l1);
+      c.appendChild(h("p","small","Inscrito em "+dBR((m.criado_em||"").slice(0,10))));
+      var d=h("details");d.appendChild(h("summary",0,"Detalhes"));
+      d.appendChild(h("p","small",m.cidade+" | "+m.telefone));
+      d.appendChild(h("p","small",m.email+(m.socio_ate?" | sócio "+validade(m.socio_ate):"")));
+      if(!m.eh_admin)d.appendChild(btn("Excluir",async function(){
         if(!confirm("Excluir "+m.nome+" e todos os dados da pessoa (cadastro, pedidos e fotos)? Não tem volta."))return;
         await apagaPastas(m.user_id);
         var x=await db.rpc("admin_excluir_conta",{p_user:m.user_id});
         if(x.error){alert("Não foi possível excluir.");return}
         renderAdmin();
       }));
+      c.appendChild(d);
       bx.appendChild(c);
     });
   }
@@ -1475,7 +1521,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   async function renderAdminAgora(){
     var on=await checaAdmin();
     $("a-login").hidden=on;$("a-painel").hidden=!on;
-    document.body.classList.toggle("modo-admin",on&&location.hash==="#admin");
+    if(on){ehAdmin=true;aplicaModo()}
     if(!on)return;
     var R=await Promise.all([
       db.from("eventos").select("*").order("data"),
@@ -1613,16 +1659,16 @@ Parceiros: os dados da proposta que você enviar.</p>
     /* número nas Pendências e rolagem vinda da notificação */
     var n=pp.length+sp.length+parp.length;
     $("ab-pend-n").textContent=n?String(n):"";$("ab-pend-n").hidden=!n;
-    if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el){var ab=el.closest(".aba");if(ab)mostrarAba(ab.dataset.aba);el.scrollIntoView({behavior:"smooth"})}}
+    [["n-pag",sp.length],["n-ped",pp.length],["n-par",parp.length]].forEach(function(x){$(x[0]).textContent=String(x[1]);$(x[0]).hidden=!x[1]});
+    if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el){var ab=el.closest(".aba"),cc=el.closest(".acc-corpo");if(ab)mostrarAba(ab.dataset.aba);if(cc)abreAcc(cc.id,true);el.scrollIntoView({behavior:"smooth"})}}
   }
   $("a-entrar").addEventListener("click",async function(){
     if(!db){erro("e-adm",OFF);return}
     var r=await db.auth.signInWithPassword({email:$("a-email").value.trim(),password:$("a-senha").value});
     if(r.error){erro("e-adm","E-mail ou senha incorretos.");return}
     if(!(await checaAdmin())){await db.auth.signOut();erro("e-adm","Esta conta não tem permissão de administrador.");return}
-    erro("e-adm","");$("a-senha").value="";atualizaConta();renderAdmin();
+    erro("e-adm","");$("a-senha").value="";setModoPref("admin");atualizaConta();renderAdmin();
   });
-  $("a-sair").addEventListener("click",async function(){await db.auth.signOut();atualizaConta();renderAdmin()});
   $("f-ev").addEventListener("submit",async function(e){
     e.preventDefault();
     if(!$("ev-titulo").value.trim()||!$("ev-data").value){erro("e-ev","Preencha o título e a data.");return}
