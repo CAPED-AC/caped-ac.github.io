@@ -120,6 +120,18 @@ a.card{display:block;color:inherit;text-decoration:none}
 .acc[aria-expanded="true"]::after{content:"▴"}
 .acc-n{display:inline-block;background:var(--red);color:#fff;border-radius:999px;min-width:24px;padding:0 8px;margin-left:10px;font-size:.85rem;text-align:center}
 .acc-corpo{margin:8px 0 4px}
+.tabbar{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));border:2px solid var(--line);border-radius:30px;box-shadow:0 10px 28px rgba(0,0,0,.35);padding:6px 8px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.tab{border-radius:22px;transition:color .25s ease,background .25s ease}
+.tab svg{transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
+.tab[aria-current="page"],.tab[aria-pressed="true"]{color:var(--navy);background:rgba(127,160,255,.15)}
+.tab[aria-current="page"] svg,.tab[aria-pressed="true"] svg{transform:translateY(-3px) scale(1.16)}
+.tab:active svg{transform:scale(.88)}
+.view.on{animation:entra .28s ease}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes brilho{0%{background-position:0 0}100%{background-position:200% 0}}
+.selo-socio{background:linear-gradient(90deg,#f0b92e,#ffe9a0,#f0b92e);background-size:200% 100%;color:#4a3300;animation:brilho 2.6s linear infinite}
+.card.socio{border-color:#e0b43c;background-image:linear-gradient(135deg,rgba(245,197,66,.14),transparent 60%)}
+@media (prefers-reduced-motion:reduce){.view.on{animation:none}.tab svg{transition:none}.selo-socio{animation:none}}
 .view{display:none}.view.on{display:block}
 details{margin-top:28px;color:var(--muted)}
 summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
@@ -153,6 +165,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
   <a class="item" href="#sobre" data-v="sobre">Sobre</a>
   <a class="item" href="#notificacoes" data-v="notificacoes" id="n-notif" hidden>Notificações</a>
   <a class="item" href="#minha-area" data-v="minha-area" id="n-minha" hidden>Meu perfil</a>
+  <a class="item" href="#falar" data-v="falar" id="n-falar" hidden>Falar com a diretoria</a>
   <a class="item" href="#senha" data-v="senha" id="n-senha" hidden>Alterar minha senha</a>
   <a class="item" href="#admin" data-v="admin" id="n-admin" hidden>Voltar ao painel da diretoria</a>
   <a class="item" href="#inicio" id="n-membro" hidden>Ver o app como associado</a>
@@ -196,7 +209,7 @@ summary{cursor:pointer;min-height:44px;padding:8px 0;font-weight:700}
     <p class="err" id="e-cpf" role="alert"></p>
 
     <label for="nasc">Data de nascimento *</label>
-    <input id="nasc" type="date" autocomplete="bday" required>
+    <input id="nasc" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="bday" required>
     <p class="err" id="e-nasc" role="alert"></p>
 
     <label for="tel">Telefone com WhatsApp *</label>
@@ -465,6 +478,21 @@ Parceiros: os dados da proposta que você enviar.</p>
   </form>
 </section>
 
+<section class="view" id="v-falar" aria-labelledby="t-falar">
+  <h1 id="t-falar">Falar com a diretoria</h1>
+  <p class="lead">Mande uma dúvida, sugestão ou reclamação. A resposta aparece aqui e você recebe uma notificação.</p>
+  <p class="lead" id="falar-msg"></p>
+  <form id="f-falar" class="card" novalidate>
+    <label for="fl-texto" style="margin-top:0">Sua mensagem *</label>
+    <textarea id="fl-texto" rows="5" maxlength="1000"></textarea>
+    <p class="err" id="e-falar" role="alert"></p>
+    <div class="cta"><button class="btn red" type="submit">Enviar mensagem</button></div>
+    <p class="ok" id="ok-falar" role="status"></p>
+  </form>
+  <h2>Minhas mensagens</h2>
+  <div id="lista-falar"></div>
+</section>
+
 <section class="view" id="v-eventos" aria-labelledby="t-ev">
   <h1 id="t-ev">Eventos e festas</h1>
   <div id="lista-ev"></div>
@@ -511,6 +539,8 @@ Parceiros: os dados da proposta que você enviar.</p>
       <div id="acc-ped" class="acc-corpo" hidden><div id="a-saude"></div><details><summary>Histórico de pedidos</summary><div id="a-saude-hist"></div></details></div>
       <button type="button" class="btn acc" data-acc="acc-par" aria-expanded="false" aria-controls="acc-par"><span class="acc-t">Propostas de parceria<span class="acc-n" id="n-par" hidden></span></span></button>
       <div id="acc-par" class="acc-corpo" hidden><div id="a-pars"></div></div>
+      <button type="button" class="btn acc" data-acc="acc-msg" aria-expanded="false" aria-controls="acc-msg"><span class="acc-t">Mensagens para a diretoria<span class="acc-n" id="n-msg" hidden></span></span></button>
+      <div id="acc-msg" class="acc-corpo" hidden><div id="a-msgs"></div><details><summary>Mensagens respondidas</summary><div id="a-msgs-ok"></div></details></div>
     </div>
 
     <div class="aba" data-aba="ev" hidden>
@@ -593,10 +623,6 @@ Parceiros: os dados da proposta que você enviar.</p>
         <div class="cta"><button class="btn" type="submit">Criar cupom</button></div>
       </form>
       <div id="a-cupons"></div>
-      <details><summary>Baixar planilhas (cópia de segurança)</summary><div class="card">
-      <p class="small">Gera uma planilha (CSV) para abrir no Excel ou Google Planilhas. Contém dados pessoais, então guarde com cuidado.</p>
-      <div class="cta"><button class="btn alt" id="x-membros" type="button">Baixar cadastros</button><button class="btn alt" id="x-socios" type="button">Baixar sócios</button></div>
-      <p class="ok" id="ok-x" role="status"></p></div></details>
       <details><summary>Histórico de sócios</summary><div id="a-socios-hist"></div></details>
     </div>
 
@@ -663,7 +689,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   /* navegação */
   function route(){
     var v=(location.hash||"#inicio").slice(1);
-    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,senha:1,"nova-senha":1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
+    if(!{inicio:1,eventos:1,cadastro:1,socio:1,parceiros:1,doar:1,sobre:1,historias:1,saude:1,privacidade:1,notificacoes:1,esqueci:1,senha:1,"nova-senha":1,falar:1,entrar:1,"minha-area":1,admin:1}[v])v="inicio";
     document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
     document.querySelectorAll("[data-v]").forEach(function(a){
       if(a.dataset.v===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
@@ -680,6 +706,8 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(v==="saude")renderSaude();
     if(v==="notificacoes")renderNotificacoes();
     if(v==="cadastro")preencheCadastro();
+    if(v==="falar")renderFalar();
+    if(v!=="admin")limpaBuscaSenha();
     if(v==="senha")usuario().then(function(u){$("senha-msg").textContent=u?"":"Entre na sua conta para alterar a senha."});
     if(v==="inicio"||v==="cadastro"||v==="socio"||v==="entrar")atualizaConta();
   }
@@ -704,14 +732,14 @@ Parceiros: os dados da proposta que você enviar.</p>
     var ok=true;
     ok=erro("e-nome",$("nome").value.trim().split(/\s+/).length<2?"Digite nome e sobrenome.":"")&&ok;
     ok=erro("e-cpf",cpfOk($("cpf").value)?"":"CPF inválido. Confira os números.")&&ok;
-    ok=erro("e-nasc",$("nasc").value?"":"Informe a data de nascimento.")&&ok;
+    ok=erro("e-nasc",dataISO($("nasc").value)?"":"Digite a data assim: 25/12/1990.")&&ok;
     ok=erro("e-tel",dig($("tel").value).length<10?"Digite o telefone com DDD.":"")&&ok;
     ok=erro("e-cidade",$("cidade").value.trim()?"":"Informe a cidade.")&&ok;
     ok=erro("e-lgpd",$("lgpd").checked?"":"Marque a autorização para salvar o cadastro.")&&ok;
     if(!ok)return;
     if(!db){erro("e-lgpd",OFF);return}
     var u=await usuario();if(!u){erro("e-lgpd","Entre na sua conta para salvar o cadastro.");return}
-    var r=await db.from("membros").upsert({user_id:u.id,nome:$("nome").value.trim(),cpf:dig($("cpf").value),nascimento:$("nasc").value,telefone:dig($("tel").value),cidade:$("cidade").value.trim(),tipo_deficiencia:$("tipo").value||null,consentimento:true},{onConflict:"user_id"});
+    var r=await db.from("membros").upsert({user_id:u.id,nome:$("nome").value.trim(),cpf:dig($("cpf").value),nascimento:dataISO($("nasc").value),telefone:dig($("tel").value),cidade:$("cidade").value.trim(),tipo_deficiencia:$("tipo").value||null,consentimento:true},{onConflict:"user_id"});
     if(r.error){erro("e-lgpd",/cpf|duplicate|unique/i.test((r.error.message||"")+(r.error.details||""))?"Este CPF já está cadastrado. Se você já tem conta, entre com ela ou use Esqueci minha senha.":FALHA);console.error(r.error);return}
     $("ok-cad").textContent=(estado&&estado.tem_cadastro)?"Dados atualizados.":"Cadastro enviado para a CAPEDAC. Obrigado!";
     setTimeout(function(){location.hash="#minha-area"},1500);
@@ -1025,7 +1053,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     tp.href=hp.href=u?"#minha-area":"#entrar";
     tp.dataset.v=u?"minha-area":"entrar";
     $("tb-perfil-txt").textContent=u?"Perfil":"Entrar";
-    $("n-senha").hidden=!u;
+    $("n-senha").hidden=!u;$("n-falar").hidden=!u;
     checaAdmin().then(function(x){
       ehAdmin=x;aplicaModo();
       if(x&&irAdminUmaVez&&modoPref()==="admin"&&(!hashInicial||hashInicial==="#inicio")&&(!location.hash||location.hash==="#inicio"))location.hash="#admin";
@@ -1061,25 +1089,6 @@ Parceiros: os dados da proposta que você enviar.</p>
     inp.value="";
   });
 
-  /* exportar listas (CSV) */
-  function baixarCsv(nome,cab,linhas){
-    function c(v){v=v==null?"":String(v);if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'}
-    var t="\uFEFF"+[cab].concat(linhas).map(function(l){return l.map(c).join(";")}).join("\r\n");
-    var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv;charset=utf-8"}));
-    a.download=nome;document.body.appendChild(a);a.click();a.remove();
-  }
-  $("x-membros").addEventListener("click",async function(){
-    var r=await db.from("membros").select("numero,nome,telefone,cidade,criado_em").order("numero");
-    if(r.error){$("ok-x").textContent=FALHA;return}
-    baixarCsv("cadastros-capedac.csv",["Nº","Nome","Telefone","Cidade","Cadastrado em"],(r.data||[]).map(function(m){return [m.numero,m.nome,m.telefone,m.cidade,(m.criado_em||"").slice(0,10)]}));
-    $("ok-x").textContent="Arquivo gerado. Procure em Downloads.";
-  });
-  $("x-socios").addEventListener("click",async function(){
-    var r=await db.from("socios").select("nome,telefone,status,pago_ate,criado_em").order("criado_em",{ascending:false});
-    if(r.error){$("ok-x").textContent=FALHA;return}
-    baixarCsv("socios-capedac.csv",["Nome","Telefone","Situação","Pago até","Aviso em"],(r.data||[]).map(function(m){return [m.nome,m.telefone,m.status,m.pago_ate||"",(m.criado_em||"").slice(0,10)]}));
-    $("ok-x").textContent="Arquivo gerado. Procure em Downloads.";
-  });
 
   /* histórias (feed) */
   var editHist=null;
@@ -1183,7 +1192,7 @@ Parceiros: os dados da proposta que você enviar.</p>
       var c=h("div","card");
       c.appendChild(h("h3",0,p.tipo));
       c.appendChild(h("p",0,p.descricao));
-      var st=p.status==="marcado"?"Marcado para "+dBR(p.data_marcada)+(p.local_marcado?" – "+p.local_marcado:""):p.status==="cancelado"?"Não foi possível marcar"+(p.local_marcado?": "+p.local_marcado:""):"Aguardando a CAPEDAC marcar";
+      var st=p.status==="marcado"?"Marcado para "+dBR(p.data_marcada)+(p.hora_marcada?" às "+p.hora_marcada:"")+(p.local_nome?" – "+p.local_nome:"")+(p.local_endereco?" ("+p.local_endereco+")":"")+(p.local_marcado?". "+p.local_marcado:""):p.status==="cancelado"?"Não foi possível marcar"+(p.local_marcado?": "+p.local_marcado:""):"Aguardando a CAPEDAC marcar";
       c.appendChild(h("p",p.status==="marcado"?"ok":"small",st));
       var rot=p.status==="cancelado"?"Remover da lista":"Cancelar pedido";
       var pergunta=p.status==="marcado"?"Cancelar este atendimento já marcado? A CAPEDAC será avisada e a foto será apagada.":"Remover este pedido e apagar a foto?";
@@ -1313,7 +1322,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   }
   function alvoDe(n){
     var t=(n.titulo||"").toLowerCase();
-    return t.indexOf("senha")>=0?"a-reset":t.indexOf("pedido")>=0?"a-saude":t.indexOf("parceria")>=0?"a-pars":t.indexOf("pagamento")>=0?"a-socios":t.indexOf("cadastro")>=0?"a-cads":null;
+    return t.indexOf("senha")>=0?"a-reset":t.indexOf("mensagem")>=0?"a-msgs":t.indexOf("pedido")>=0?"a-saude":t.indexOf("parceria")>=0?"a-pars":t.indexOf("pagamento")>=0?"a-socios":t.indexOf("cadastro")>=0?"a-cads":null;
   }
   async function renderNotificacoes(){
     var box=$("lista-notif"),msg=$("notif-msg"),lp=$("notif-limpar");box.textContent="";msg.textContent="";lp.hidden=true;
@@ -1360,7 +1369,7 @@ Parceiros: os dados da proposta que você enviar.</p>
     if(!m)return;
     $("nome").value=m.nome||"";
     $("cpf").value=m.cpf||"";$("cpf").dispatchEvent(new Event("input"));
-    $("nasc").value=m.nascimento||"";
+    $("nasc").value=isoParaBR(m.nascimento);
     $("tel").value=m.telefone||"";
     $("cidade").value=m.cidade||"";
     $("tipo").value=m.tipo_deficiencia||"";
@@ -1412,9 +1421,72 @@ Parceiros: os dados da proposta que você enviar.</p>
         if(s1.length<8){alert("A senha precisa ter pelo menos 8 caracteres.");return}
         var x=await db.rpc("admin_redefinir_senha",{p_email:m.email,p_senha:s1});
         alert(x.error?"Não foi possível trocar a senha.":"Senha trocada. Passe a senha à pessoa e peça que a altere em Perfil > Alterar minha senha.");
+        if(!x.error)limpaBuscaSenha();
       },"red"));
       box.appendChild(c);
     });
+  });
+
+  /* datas e horas digitadas */
+  function maskData(el){el.addEventListener("input",function(){
+    var v=el.value.replace(/\D/g,"").slice(0,8);
+    if(v.length>4)v=v.replace(/(\d{2})(\d{2})(\d{1,4})/,"$1/$2/$3");else if(v.length>2)v=v.replace(/(\d{2})(\d{1,2})/,"$1/$2");
+    el.value=v})}
+  function maskHora(el){el.addEventListener("input",function(){
+    var v=el.value.replace(/\D/g,"").slice(0,4);
+    if(v.length>2)v=v.replace(/(\d{2})(\d{1,2})/,"$1:$2");
+    el.value=v})}
+  function dataISO(t,futuro){
+    var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t||"");if(!m)return null;
+    var d=+m[1],mo=+m[2],a=+m[3],dt=new Date(a,mo-1,d);
+    if(dt.getFullYear()!==a||dt.getMonth()!==mo-1||dt.getDate()!==d)return null;
+    if(a<1900||(!futuro&&dt>new Date()))return null;
+    return a+"-"+m[2]+"-"+m[1];
+  }
+  function isoParaBR(i){var p=(i||"").split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:""}
+  function horaOk(t){var m=/^(\d{2}):(\d{2})$/.exec(t||"");return m&&+m[1]<24&&+m[2]<60?t:null}
+  maskData($("nasc"));
+
+  /* busca de senha some ao sair da tela ou do app */
+  function limpaBuscaSenha(){var b=$("a-reset"),i=$("a-busca-senha");if(b)b.textContent="";if(i)i.value=""}
+  document.addEventListener("visibilitychange",function(){if(document.hidden)limpaBuscaSenha()});
+  window.addEventListener("pagehide",limpaBuscaSenha);
+
+  /* lista de membros se atualiza sozinha */
+  async function atualizaMembros(){
+    var aba=document.querySelector('.aba[data-aba="pes"]');
+    if(!aba||aba.hidden||document.querySelector("#a-cads details[open]"))return;
+    var r=await db.rpc("admin_associados");
+    if(r.error||!r.data)return;
+    ASSOC=r.data;desenhaAssoc();
+  }
+  setInterval(function(){if(!document.hidden&&document.body.classList.contains("modo-admin"))atualizaMembros()},20000);
+
+  /* falar com a diretoria */
+  async function renderFalar(){
+    var box=$("lista-falar"),msg=$("falar-msg");box.textContent="";msg.textContent="";
+    var u=await usuario();$("f-falar").hidden=!u;
+    if(!u){msg.textContent="Entre na sua conta para falar com a diretoria.";return}
+    var r=await db.from("mensagens").select("*").order("criado_em",{ascending:false});
+    if(r.error){msg.textContent=FALHA;return}
+    var l=r.data||[];
+    if(!l.length){box.appendChild(h("p","small","Você ainda não enviou mensagens."));return}
+    l.forEach(function(m){
+      var c=h("div","card");
+      c.appendChild(h("p","small",new Date(m.criado_em).toLocaleDateString("pt-BR")));
+      c.appendChild(h("p",0,m.texto));
+      if(m.resposta){c.appendChild(h("p","ok","Resposta da diretoria:"));c.appendChild(h("p",0,m.resposta))}
+      else c.appendChild(h("p","small","Aguardando resposta da diretoria."));
+      box.appendChild(c);
+    });
+  }
+  $("f-falar").addEventListener("submit",async function(e){
+    e.preventDefault();
+    var t=$("fl-texto").value.trim();$("ok-falar").textContent="";
+    if(t.length<3){erro("e-falar","Escreva a sua mensagem.");return}
+    var r=await db.rpc("enviar_mensagem",{p_texto:t});
+    if(r.error){erro("e-falar",/muitas/.test(r.error.message||"")?"Você já tem mensagens esperando resposta. Aguarde a diretoria responder.":FALHA);return}
+    erro("e-falar","");$("f-falar").reset();$("ok-falar").textContent="Mensagem enviada. A diretoria vai responder aqui.";renderFalar();
   });
 
   /* painel da diretoria */
@@ -1427,6 +1499,7 @@ Parceiros: os dados da proposta que você enviar.</p>
   }
   var ASSOC=[],adminBusy=false,adminAgain=false;
   function mostrarAba(a){
+    limpaBuscaSenha();
     document.querySelectorAll(".aba").forEach(function(e){e.hidden=e.dataset.aba!==a});
     document.querySelectorAll("[data-ir]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.ir===a))});
     try{sessionStorage.setItem("capedac_aba",a)}catch(e){}
@@ -1470,9 +1543,9 @@ Parceiros: os dados da proposta que você enviar.</p>
     var l=ASSOC.filter(function(m){return (assocFiltro==="todos"||ehSocio(m))&&(!f||(m.nome+" "+m.cidade+" "+m.telefone+" "+m.email).toLowerCase().indexOf(f)>=0)});
     if(!l.length)bx.appendChild(h("p","small","Nenhum membro encontrado."));
     l.forEach(function(m){
-      var c=h("div","card"),l1=h("div");
+      var c=h("div","card"+(ehSocio(m)?" socio":"")),l1=h("div");
       l1.appendChild(h("strong",0,m.nome));
-      if(ehSocio(m))l1.appendChild(h("span","selo","★ Sócio"));
+      if(ehSocio(m))l1.appendChild(h("span","selo selo-socio","★ Sócio"));
       if(m.eh_admin)l1.appendChild(h("span","selo selo-dir","Diretoria"));
       c.appendChild(l1);
       c.appendChild(h("p","small","Inscrito em "+dBR((m.criado_em||"").slice(0,10))));
@@ -1533,9 +1606,10 @@ Parceiros: os dados da proposta que você enviar.</p>
       db.from("pedidos_saude").select("*").order("criado_em",{ascending:false}),
       db.from("historias").select("*").order("criado_em",{ascending:false}),
       db.from("parceiros").select("*").order("criado_em",{ascending:false}),
-      db.from("cupons").select("*").order("criado_em",{ascending:false})
+      db.from("cupons").select("*").order("criado_em",{ascending:false}),
+      db.from("mensagens").select("*").order("criado_em",{ascending:false})
     ]);
-    var ev=R[0].data||[],pres=R[1].data||[],soc=R[2].data||[],mem=R[3].data||[],ben=R[4].data||[],sob=R[5].data,ped=R[6].data||[],his=R[7].data||[],par=R[8].data||[],cup=R[9].data||[];
+    var ev=R[0].data||[],pres=R[1].data||[],soc=R[2].data||[],mem=R[3].data||[],ben=R[4].data||[],sob=R[5].data,ped=R[6].data||[],his=R[7].data||[],par=R[8].data||[],cup=R[9].data||[],msg=R[10].data||[];
     function zera(id){var b=$(id);b.textContent="";return b}
     function vazio(b,t){b.appendChild(h("p","small",t))}
 
@@ -1588,15 +1662,19 @@ Parceiros: os dados da proposta que você enviar.</p>
         });
         c.appendChild(bf);
       }
-      var dt=h("input");dt.type="date";dt.setAttribute("aria-label","Data marcada");dt.style.marginTop="8px";
-      var lc=h("input");lc.placeholder="Local e observações (ex.: Clínica X, levar documento)";lc.maxLength=200;lc.setAttribute("aria-label","Local e observações");lc.style.marginTop="8px";
+      function campo(ph,mx){var i=h("input");i.placeholder=ph;i.maxLength=mx;i.setAttribute("aria-label",ph);i.style.marginTop="8px";return i}
+      var dt=campo("Data (dd/mm/aaaa)",10),hr=campo("Hora (hh:mm)",5),ln=campo("Nome do local (ex.: Clínica Saúde Total)",120),le=campo("Endereço do local (rua, número, bairro)",200),lc=campo("Observações ou motivo (opcional)",200);
+      dt.inputMode="numeric";hr.inputMode="numeric";maskData(dt);maskHora(hr);
       var row=h("div","row");row.style.marginTop="8px";
       row.appendChild(btn("Confirmar marcado",async function(){
-        if(!dt.value){alert("Escolha a data marcada.");return}
-        await db.from("pedidos_saude").update({status:"marcado",data_marcada:dt.value,local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()},"red"));
+        var di=dataISO(dt.value,true),hh=horaOk(hr.value);
+        if(!di){alert("Digite a data assim: 25/12/2026.");return}
+        if(!hh){alert("Digite a hora assim: 14:30.");return}
+        if(ln.value.trim().length<3||le.value.trim().length<5){alert("Informe o nome e o endereço do local.");return}
+        await db.from("pedidos_saude").update({status:"marcado",data_marcada:di,hora_marcada:hh,local_nome:ln.value.trim(),local_endereco:le.value.trim(),local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()},"red"));
       row.appendChild(btn("Não consegui marcar",async function(){
         await db.from("pedidos_saude").update({status:"cancelado",local_marcado:lc.value.trim()||null}).eq("id",p.id);renderAdmin()}));
-      c.appendChild(dt);c.appendChild(lc);c.appendChild(row);
+      [dt,hr,ln,le,lc,row].forEach(function(x){c.appendChild(x)});
       sd.appendChild(c);
     });
     if(!pq.length)vazio(sdh,"Nada no histórico.");
@@ -1656,10 +1734,37 @@ Parceiros: os dados da proposta que você enviar.</p>
       c.appendChild(row);c.appendChild(h("p","small","Desativar só impede novos usos: quem já usou continua sócio."));cx.appendChild(c);
     });
 
+    /* mensagens */
+    var mx=zera("a-msgs"),mo=zera("a-msgs-ok");
+    var mp=msg.filter(function(m){return !m.resposta}),mr=msg.filter(function(m){return !!m.resposta});
+    if(!mp.length)vazio(mx,"Nenhuma mensagem esperando resposta.");
+    mp.forEach(function(m){
+      var c=h("div","card"),pe=mapa[m.user_id]||{};
+      c.appendChild(h("strong",0,pe.nome||"Sem cadastro"));
+      c.appendChild(h("p","small",new Date(m.criado_em).toLocaleDateString("pt-BR")+(pe.telefone?" | "+pe.telefone:"")));
+      c.appendChild(h("p",0,m.texto));
+      var ta=h("textarea");ta.rows=3;ta.maxLength=2000;ta.placeholder="Escreva a resposta";ta.setAttribute("aria-label","Resposta");ta.style.marginTop="8px";
+      c.appendChild(ta);
+      c.appendChild(btn("Enviar resposta",async function(){
+        var t=ta.value.trim();if(t.length<2){alert("Escreva a resposta.");return}
+        var x=await db.from("mensagens").update({resposta:t,respondida_em:new Date().toISOString()}).eq("id",m.id);
+        if(x.error){alert(FALHA);return}
+        renderAdmin()},"red"));
+      mx.appendChild(c);
+    });
+    if(!mr.length)vazio(mo,"Nenhuma mensagem respondida.");
+    mr.forEach(function(m){
+      var c=h("div","card"),pe=mapa[m.user_id]||{};
+      c.appendChild(h("strong",0,pe.nome||"Sem cadastro"));
+      c.appendChild(h("p","small",m.texto));
+      c.appendChild(h("p",0,"Resposta: "+m.resposta));
+      mo.appendChild(c);
+    });
+
     /* número nas Pendências e rolagem vinda da notificação */
-    var n=pp.length+sp.length+parp.length;
+    var n=pp.length+sp.length+parp.length+mp.length;
     $("ab-pend-n").textContent=n?String(n):"";$("ab-pend-n").hidden=!n;
-    [["n-pag",sp.length],["n-ped",pp.length],["n-par",parp.length]].forEach(function(x){$(x[0]).textContent=String(x[1]);$(x[0]).hidden=!x[1]});
+    [["n-pag",sp.length],["n-ped",pp.length],["n-par",parp.length],["n-msg",mp.length]].forEach(function(x){$(x[0]).textContent=String(x[1]);$(x[0]).hidden=!x[1]});
     if(alvoScroll){var el=$(alvoScroll);alvoScroll=null;if(el){var ab=el.closest(".aba"),cc=el.closest(".acc-corpo");if(ab)mostrarAba(ab.dataset.aba);if(cc)abreAcc(cc.id,true);el.scrollIntoView({behavior:"smooth"})}}
   }
   $("a-entrar").addEventListener("click",async function(){
